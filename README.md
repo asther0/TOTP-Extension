@@ -76,6 +76,81 @@ Cuando configuras autenticación de dos factores en un servicio:
 
 Ejemplo de clave: `JBSWY3DPEHPK3PXP` o `GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ`
 
+## ❓ Preguntas Frecuentes (FAQ)
+
+### ¿Es seguro almacenar mis claves en la extensión?
+
+Sí, todas las claves se almacenan **localmente** en tu navegador usando la Chrome Storage API. Nunca se envían a ningún servidor externo. Sin embargo, es importante que:
+- Mantengas tu computadora segura y actualizada
+- Uses autenticación en tu sistema operativo
+- Mantengas un respaldo de tus claves (función de exportar)
+
+### ¿Puedo usar esta extensión sin internet?
+
+¡Absolutamente! La extensión funciona **completamente offline**. Los códigos TOTP se generan localmente usando tu reloj del sistema. No necesitas conexión a internet en ningún momento.
+
+### ¿Qué hago si pierdo mis códigos?
+
+Siempre debes mantener un método de respaldo:
+1. Guarda las claves secretas originales en un lugar seguro
+2. Usa la función de **Exportar** para crear respaldos periódicos
+3. Configura métodos de recuperación en los servicios (email, SMS, códigos de recuperación)
+
+### ¿Por qué los códigos son diferentes a los de mi celular?
+
+Esto puede pasar si:
+- **Reloj desincronizado**: Asegúrate de que la hora de tu computadora esté correcta
+- **Zona horaria incorrecta**: Verifica la configuración de zona horaria
+- **Configuración diferente**: Verifica que uses los mismos parámetros (algoritmo, dígitos, período)
+
+### ¿Puedo sincronizar entre dispositivos?
+
+Actualmente no hay sincronización automática. Sin embargo, puedes:
+1. Exportar tus cuentas en un dispositivo
+2. Importar el archivo en otro dispositivo
+3. (Próximamente se agregará sincronización encriptada opcional)
+
+### ¿Funciona con Google Authenticator, Authy, etc.?
+
+Sí, esta extensión es **compatible con cualquier servicio que use TOTP**:
+- Google Authenticator
+- Microsoft Authenticator
+- Authy
+- 1Password
+- LastPass Authenticator
+- Y cualquier otro que siga el estándar RFC 6238
+
+### ¿Puedo editar una cuenta después de agregarla?
+
+Actualmente, para modificar una cuenta debes:
+1. Eliminar la cuenta existente
+2. Agregar una nueva con la información correcta
+(La funcionalidad de edición se agregará en una futura versión)
+
+### ¿Por qué la barra de progreso se pone roja?
+
+La barra se vuelve roja cuando quedan **menos de 10 segundos** antes de que el código cambie. Esto te da una advertencia visual para que copies el código antes de que expire.
+
+### ¿Puedo usar esto en Safari?
+
+Sí, la extensión está diseñada para ser compatible con Safari en macOS. Sigue las instrucciones de instalación específicas para Safari en la sección de instalación.
+
+### ¿Consume muchos recursos?
+
+No, la extensión está **optimizada para bajo consumo**:
+- Throttling de renders (máximo 10 por segundo)
+- Actualizaciones inteligentes (solo cuando es necesario)
+- Sin conexiones de red
+- Código JavaScript eficiente
+- CSS optimizado con variables
+
+### ¿Qué pasa si borro el navegador o extensión?
+
+Si borras la extensión o los datos del navegador, **perderás todas las cuentas guardadas**. Por eso es crucial:
+1. Hacer respaldos regulares (botón Exportar)
+2. Mantener las claves secretas originales
+3. No depender únicamente de esta extensión
+
 ## 🎨 Capturas de Pantalla
 
 _Próximamente_
