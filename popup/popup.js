@@ -347,22 +347,38 @@ function switchTab(tabName) {
 async function handleManualSubmit(e) {
   e.preventDefault();
 
-  const account = {
-    name: document.getElementById('account-name').value.trim(),
-    platform: document.getElementById('account-platform').value.trim(),
-    secret: document.getElementById('secret-key').value.trim().toUpperCase(),
-    digits: parseInt(document.getElementById('digits').value),
-    period: parseInt(document.getElementById('period').value),
-    algorithm: document.getElementById('algorithm').value
-  };
+  const name = document.getElementById('account-name').value.trim();
+  const platform = document.getElementById('account-platform').value.trim();
+  const secret = document.getElementById('secret-key').value.trim().toUpperCase();
 
-  // Validar que la clave secreta sea válida
-  try {
-    OTPAuth.Secret.fromBase32(stripSpaces(account.secret));
-  } catch (error) {
-    alert('La clave secreta no es válida. Debe ser una cadena en formato Base32.');
+  // Validar nombre y plataforma
+  if (!name || !platform) {
+    alert('El nombre y la plataforma son obligatorios');
     return;
   }
+
+  // Validar duplicados
+  if (isDuplicateAccount(name, platform)) {
+    alert(`Ya existe una cuenta con el nombre "${name}" en la plataforma "${platform}"`);
+    return;
+  }
+
+  // Validar clave secreta
+  const validation = validateSecret(secret);
+  if (!validation.valid) {
+    alert(validation.error);
+    return;
+  }
+
+  const account = {
+    name,
+    platform,
+    secret: stripSpaces(secret),
+    digits: parseInt(document.getElementById('digits').value),
+    period: parseInt(document.getElementById('period').value),
+    algorithm: document.getElementById('algorithm').value,
+    createdAt: new Date().toISOString()
+  };
 
   // Agregar cuenta
   appState.accounts.push(account);
@@ -414,6 +430,52 @@ function stopQRScanner() {
 
   video.classList.add('hidden');
   instructions.classList.remove('hidden');
+}
+
+/**
+ * Valida que una clave secreta sea válida en Base32
+ * @param {string} secret - Clave a validar
+ * @returns {Object} - {valid: boolean, error: string}
+ */
+function validateSecret(secret) {
+  const cleaned = stripSpaces(secret).toUpperCase();
+
+  // Verificar que no esté vacía
+  if (!cleaned) {
+    return { valid: false, error: 'La clave secreta no puede estar vacía' };
+  }
+
+  // Verificar caracteres válidos en Base32 (A-Z, 2-7, =)
+  const base32Regex = /^[A-Z2-7=]+$/;
+  if (!base32Regex.test(cleaned)) {
+    return { valid: false, error: 'La clave debe contener solo caracteres válidos de Base32 (A-Z, 2-7)' };
+  }
+
+  // Verificar longitud mínima (generalmente 16 caracteres)
+  if (cleaned.replace(/=/g, '').length < 16) {
+    return { valid: false, error: 'La clave es demasiado corta (mínimo 16 caracteres)' };
+  }
+
+  // Intentar decodificar con OTPAuth
+  try {
+    OTPAuth.Secret.fromBase32(cleaned);
+    return { valid: true, error: null };
+  } catch (error) {
+    return { valid: false, error: 'La clave secreta no es válida en formato Base32' };
+  }
+}
+
+/**
+ * Valida que el nombre de cuenta no esté duplicado
+ * @param {string} name - Nombre a validar
+ * @param {string} platform - Plataforma a validar
+ * @returns {boolean} - true si ya existe
+ */
+function isDuplicateAccount(name, platform) {
+  return appState.accounts.some(
+    account => account.name.toLowerCase() === name.toLowerCase() &&
+               account.platform.toLowerCase() === platform.toLowerCase()
+  );
 }
 
 // Limpiar interval al cerrar el popup
