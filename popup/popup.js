@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', initializeApp);
  */
 async function initializeApp() {
   await loadAccounts();
+  await loadTheme();
   renderAccounts();
   setupEventListeners();
   startAutoUpdate();
@@ -252,6 +253,9 @@ function setupEventListeners() {
     document.getElementById('import-file').click();
   });
   document.getElementById('import-file')?.addEventListener('change', importAccounts);
+
+  // Theme toggle
+  document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
 }
 
 /**
@@ -498,6 +502,54 @@ function clearSearch() {
   appState.searchQuery = '';
   document.getElementById('clear-search').classList.add('hidden');
   renderAccounts();
+}
+
+/**
+ * Carga el tema guardado
+ */
+async function loadTheme() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(['darkTheme'], (result) => {
+      if (result.darkTheme) {
+        document.body.classList.add('dark-theme');
+        updateThemeIcon(true);
+      }
+      resolve();
+    });
+  });
+}
+
+/**
+ * Guarda el tema actual
+ * @param {boolean} isDark - Si el tema oscuro está activo
+ */
+async function saveTheme(isDark) {
+  return new Promise((resolve) => {
+    chrome.storage.local.set({ darkTheme: isDark }, () => {
+      resolve();
+    });
+  });
+}
+
+/**
+ * Alterna entre tema claro y oscuro
+ */
+async function toggleTheme() {
+  const isDark = document.body.classList.toggle('dark-theme');
+  await saveTheme(isDark);
+  updateThemeIcon(isDark);
+}
+
+/**
+ * Actualiza el ícono del botón de tema
+ * @param {boolean} isDark - Si el tema oscuro está activo
+ */
+function updateThemeIcon(isDark) {
+  const themeBtn = document.getElementById('theme-toggle');
+  if (themeBtn) {
+    themeBtn.textContent = isDark ? '☀️' : '🌙';
+    themeBtn.title = isDark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro';
+  }
 }
 
 /**
