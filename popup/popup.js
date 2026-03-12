@@ -245,6 +245,13 @@ function setupEventListeners() {
   // Búsqueda
   document.getElementById('search-input')?.addEventListener('input', handleSearch);
   document.getElementById('clear-search')?.addEventListener('click', clearSearch);
+
+  // Exportar/Importar
+  document.getElementById('export-btn')?.addEventListener('click', exportAccounts);
+  document.getElementById('import-btn')?.addEventListener('click', () => {
+    document.getElementById('import-file').click();
+  });
+  document.getElementById('import-file')?.addEventListener('change', importAccounts);
 }
 
 /**
@@ -491,6 +498,113 @@ function clearSearch() {
   appState.searchQuery = '';
   document.getElementById('clear-search').classList.add('hidden');
   renderAccounts();
+}
+
+/**
+ * Exporta todas las cuentas a un archivo JSON
+ */
+function exportAccounts() {
+  if (appState.accounts.length === 0) {
+    alert('No hay cuentas para exportar');
+    return;
+  }
+
+  const exportData = {
+    version: '1.0',
+    exportedAt: new Date().toISOString(),
+    accounts: appState.accounts
+  };
+
+  const dataStr = JSON.stringify(exportData, null, 2);
+  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+
+  const url = URL.createObjectURL(dataBlob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `totp-backup-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+
+  // Mostrar confirmación
+  alert(`✓ ${appState.accounts.length} cuentas exportadas exitosamente`);
+}
+
+/**
+ * Importa cuentas desde un archivo JSON
+ * @param {Event} e - Evento de change del input file
+ */
+async function importAccounts(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+
+    // Validar estructura del archivo
+    if (!data.accounts || !Array.isArray(data.accounts)) {
+      throw new Error('Formato de archivo inválido');
+    }
+
+    // Validar cada cuenta
+    const validAccounts = [];
+    const errors = [];
+
+    for (const account of data.accounts) {
+      if (!account.name || !account.platform || !account.secret) {
+        errors.push(`Cuenta inválida: falta información requerida`);
+        continue;
+      }
+
+      // Validar clave secreta
+      const validation = validateSecret(account.secret);
+      if (!validation.valid) {
+        errors.push(`${account.name}: ${validation.error}`);
+        continue;
+      }
+
+      // Evitar duplicados
+      if (!isDuplicateAccount(account.name, account.platform)) {
+        validAccounts.push({
+          name: account.name,
+          platform: account.platform,
+          secret: account.secret,
+          digits: parseInt(account.digits) || 6,
+          period: parseInt(account.period) || 30,
+          algorithm: account.algorithm || 'SHA1',
+          createdAt: account.createdAt || new Date().toISOString()
+        });
+      } else {
+        errors.push(`${account.name} (${account.platform}): ya existe`);
+      }
+    }
+
+    // Agregar cuentas válidas
+    if (validAccounts.length > 0) {
+      appState.accounts.push(...validAccounts);
+      await saveAccounts();
+      renderAccounts();
+
+      let message = `✓ ${validAccounts.length} cuentas importadas exitosamente`;
+      if (errors.length > 0) {
+        message += `\n\n⚠️ ${errors.length} cuentas no pudieron importarse:\n${errors.slice(0, 5).join('\n')}`;
+        if (errors.length > 5) {
+          message += `\n... y ${errors.length - 5} más`;
+        }
+      }
+      alert(message);
+    } else {
+      alert('❌ No se pudo importar ninguna cuenta:\n' + errors.join('\n'));
+    }
+  } catch (error) {
+    console.error('Error importando cuentas:', error);
+    alert('Error al importar el archivo. Verifica que sea un archivo válido.');
+  } finally {
+    // Limpiar input file
+    e.target.value = '';
+  }
 }
 
 /**
