@@ -9,7 +9,9 @@ const appState = {
   updateInterval: null,
   scannerStream: null,
   searchQuery: '',
-  sortBy: 'name-asc'
+  sortBy: 'name-asc',
+  lastRenderTime: 0,
+  renderThrottle: false
 };
 
 // Inicializar la extensión cuando se carga el popup
@@ -54,6 +56,13 @@ async function saveAccounts() {
  * Renderiza todas las cuentas en la UI
  */
 function renderAccounts() {
+  // Throttle renders para mejorar rendimiento
+  const now = Date.now();
+  if (appState.renderThrottle && now - appState.lastRenderTime < 100) {
+    return;
+  }
+  appState.lastRenderTime = now;
+
   const accountsList = document.getElementById('accounts-list');
   const emptyState = document.getElementById('empty-state');
   const addBtnContainer = document.getElementById('add-account-btn-container');
@@ -360,7 +369,17 @@ function startAutoUpdate() {
   }
 
   appState.updateInterval = setInterval(() => {
-    renderAccounts();
+    // Solo re-renderizar si han pasado códigos que necesitan actualización
+    const needsUpdate = appState.accounts.some(account => {
+      const timeRemaining = getTimeRemaining(account.period || 30);
+      // Re-renderizar cuando cambia el código o cada 1 segundo si quedan menos de 10
+      return timeRemaining === (account.period || 30) || timeRemaining <= 10;
+    });
+
+    if (needsUpdate || !appState.renderThrottle) {
+      renderAccounts();
+      appState.renderThrottle = true;
+    }
   }, 1000);
 }
 
@@ -509,6 +528,8 @@ function handleSearch(e) {
     clearBtn.classList.add('hidden');
   }
 
+  // Deshabilitar throttle durante búsqueda para respuesta inmediata
+  appState.renderThrottle = false;
   renderAccounts();
 }
 
