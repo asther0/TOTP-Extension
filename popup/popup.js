@@ -7,7 +7,8 @@
 const appState = {
   accounts: [],
   updateInterval: null,
-  scannerStream: null
+  scannerStream: null,
+  searchQuery: ''
 };
 
 // Inicializar la extensión cuando se carga el popup
@@ -53,6 +54,22 @@ function renderAccounts() {
   const accountsList = document.getElementById('accounts-list');
   const emptyState = document.getElementById('empty-state');
   const addBtnContainer = document.getElementById('add-account-btn-container');
+  const searchContainer = document.getElementById('search-container');
+
+  // Mostrar/ocultar barra de búsqueda
+  if (appState.accounts.length > 3) {
+    searchContainer.classList.remove('hidden');
+  } else {
+    searchContainer.classList.add('hidden');
+  }
+
+  // Filtrar cuentas según búsqueda
+  const filteredAccounts = appState.accounts.filter(account => {
+    if (!appState.searchQuery) return true;
+    const query = appState.searchQuery.toLowerCase();
+    return account.name.toLowerCase().includes(query) ||
+           account.platform.toLowerCase().includes(query);
+  });
 
   // Mostrar estado vacío si no hay cuentas
   if (appState.accounts.length === 0) {
@@ -66,27 +83,39 @@ function renderAccounts() {
   emptyState.classList.add('hidden');
   addBtnContainer.classList.remove('hidden');
 
+  // Mostrar mensaje si no hay resultados de búsqueda
+  if (filteredAccounts.length === 0 && appState.searchQuery) {
+    accountsList.innerHTML = `
+      <div class="empty-state">
+        <p>No se encontraron cuentas que coincidan con "${appState.searchQuery}"</p>
+      </div>
+    `;
+    return;
+  }
+
   // Renderizar cada cuenta
-  accountsList.innerHTML = appState.accounts.map((account, index) => {
+  accountsList.innerHTML = filteredAccounts.map((account, index) => {
+    // Obtener el índice real en el array completo
+    const realIndex = appState.accounts.indexOf(account);
     const code = generateTOTP(account);
     const timeRemaining = getTimeRemaining(account.period || 30);
     const progress = (timeRemaining / (account.period || 30)) * 100;
     const isWarning = timeRemaining <= 10;
 
     return `
-      <div class="account-card" data-index="${index}">
+      <div class="account-card" data-index="${realIndex}">
         <div class="account-header">
           <div class="account-info">
             <h3>${escapeHtml(account.name)}</h3>
             <p>${escapeHtml(account.platform)}</p>
           </div>
-          <button class="account-delete" data-index="${index}" title="Eliminar cuenta">
+          <button class="account-delete" data-index="${realIndex}" title="Eliminar cuenta">
             🗑️
           </button>
         </div>
         <div class="code-container">
           <div class="code-display">${formatCode(code)}</div>
-          <button class="copy-btn" data-index="${index}">
+          <button class="copy-btn" data-index="${realIndex}">
             Copiar
           </button>
         </div>
@@ -212,6 +241,10 @@ function setupEventListeners() {
 
   // Botón iniciar cámara
   document.getElementById('start-camera')?.addEventListener('click', startQRScanner);
+
+  // Búsqueda
+  document.getElementById('search-input')?.addEventListener('input', handleSearch);
+  document.getElementById('clear-search')?.addEventListener('click', clearSearch);
 }
 
 /**
@@ -430,6 +463,34 @@ function stopQRScanner() {
 
   video.classList.add('hidden');
   instructions.classList.remove('hidden');
+}
+
+/**
+ * Maneja la búsqueda de cuentas
+ * @param {Event} e - Evento de input
+ */
+function handleSearch(e) {
+  appState.searchQuery = e.target.value.trim();
+  const clearBtn = document.getElementById('clear-search');
+
+  if (appState.searchQuery) {
+    clearBtn.classList.remove('hidden');
+  } else {
+    clearBtn.classList.add('hidden');
+  }
+
+  renderAccounts();
+}
+
+/**
+ * Limpia la búsqueda
+ */
+function clearSearch() {
+  const searchInput = document.getElementById('search-input');
+  searchInput.value = '';
+  appState.searchQuery = '';
+  document.getElementById('clear-search').classList.add('hidden');
+  renderAccounts();
 }
 
 /**
