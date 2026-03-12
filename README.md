@@ -1,6 +1,13 @@
 # 🔐 TOTP Authenticator Extension
 
+[![GitHub release](https://img.shields.io/github/v/release/asther0/TOTP-Extension?include_prereleases)](https://github.com/asther0/TOTP-Extension/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub issues](https://img.shields.io/github/issues/asther0/TOTP-Extension)](https://github.com/asther0/TOTP-Extension/issues)
+[![GitHub stars](https://img.shields.io/github/stars/asther0/TOTP-Extension)](https://github.com/asther0/TOTP-Extension/stargazers)
+
 Extensión de navegador (Chrome/Safari) que funciona como espejo de tu autenticador móvil, permitiéndote copiar códigos MFA directamente sin necesidad de desbloquear tu celular.
+
+**[Ver en GitHub](https://github.com/asther0/TOTP-Extension)** | **[Reportar Bug](https://github.com/asther0/TOTP-Extension/issues)** | **[Solicitar Feature](https://github.com/asther0/TOTP-Extension/issues)**
 
 ## ✨ Características
 
@@ -209,14 +216,16 @@ TOTP-Extension/
 
 ## 🤝 Contribuir
 
-¡Las contribuciones son bienvenidas! Si encuentras un bug o tienes una sugerencia:
+¡Las contribuciones son bienvenidas! Lee nuestra [Guía de Contribución](CONTRIBUTING.md) para más detalles.
 
-1. Abre un issue
-2. Crea un fork del proyecto
-3. Crea una rama para tu feature: `git checkout -b feature/nueva-funcionalidad`
-4. Commit tus cambios: `git commit -m 'Agregar nueva funcionalidad'`
-5. Push a la rama: `git push origin feature/nueva-funcionalidad`
-6. Abre un Pull Request
+Proceso rápido:
+
+1. [Abre un issue](https://github.com/asther0/TOTP-Extension/issues) o comenta en uno existente
+2. Fork el proyecto en GitHub
+3. Crea una rama: `git checkout -b feature/nueva-funcionalidad`
+4. Commit: `git commit -m 'Add: nueva funcionalidad'`
+5. Push: `git push origin feature/nueva-funcionalidad`
+6. [Abre un Pull Request](https://github.com/asther0/TOTP-Extension/pulls)
 
 ## 📄 Licencia
 
