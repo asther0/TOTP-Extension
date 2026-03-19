@@ -207,29 +207,15 @@ function setupListeners() {
     tab.addEventListener('click', () => switchTab(tab.dataset.tab));
   });
 
-  // QR Upload
-  const dropzone = document.getElementById('qr-dropzone');
+  // QR Options
   const qrFile = document.getElementById('qr-file');
 
-  document.getElementById('qr-select-btn').addEventListener('click', () => qrFile.click());
+  document.getElementById('capture-btn').addEventListener('click', captureScreen);
+  document.getElementById('upload-btn').addEventListener('click', () => qrFile.click());
+  document.getElementById('qr-retry').addEventListener('click', resetQrUpload);
 
   qrFile.addEventListener('change', e => {
     if (e.target.files[0]) processQrImage(e.target.files[0]);
-  });
-
-  dropzone.addEventListener('dragover', e => {
-    e.preventDefault();
-    dropzone.classList.add('dragover');
-  });
-
-  dropzone.addEventListener('dragleave', () => {
-    dropzone.classList.remove('dragover');
-  });
-
-  dropzone.addEventListener('drop', e => {
-    e.preventDefault();
-    dropzone.classList.remove('dragover');
-    if (e.dataTransfer.files[0]) processQrImage(e.dataTransfer.files[0]);
   });
 
   // Formulario manual
@@ -276,57 +262,94 @@ function switchTab(tabName) {
 function resetQrUpload() {
   document.getElementById('qr-file').value = '';
   document.getElementById('qr-preview').classList.add('hidden');
-  document.getElementById('qr-dropzone').classList.remove('hidden');
+  document.querySelector('.qr-options').classList.remove('hidden');
   document.getElementById('qr-status').className = 'qr-status';
   document.getElementById('qr-status').textContent = '';
 }
 
+function showQrPreview() {
+  document.querySelector('.qr-options').classList.add('hidden');
+  document.getElementById('qr-preview').classList.remove('hidden');
+}
+
+// Capturar pantalla
+async function captureScreen() {
+  const status = document.getElementById('qr-status');
+  const img = document.getElementById('qr-image');
+
+  showQrPreview();
+  status.className = 'qr-status loading';
+  status.textContent = 'Capturando pantalla...';
+
+  try {
+    const response = await chrome.runtime.sendMessage({ action: 'captureScreen' });
+
+    if (response.error) {
+      status.className = 'qr-status error';
+      status.textContent = response.error;
+      return;
+    }
+
+    img.src = response.dataUrl;
+    status.textContent = 'Buscando codigo QR...';
+
+    img.onload = () => {
+      scanQrFromImage(img, response.dataUrl);
+    };
+  } catch (e) {
+    status.className = 'qr-status error';
+    status.textContent = 'Error al capturar pantalla';
+  }
+}
+
 async function processQrImage(file) {
-  const dropzone = document.getElementById('qr-dropzone');
-  const preview = document.getElementById('qr-preview');
   const img = document.getElementById('qr-image');
   const status = document.getElementById('qr-status');
 
-  // Mostrar preview
+  showQrPreview();
   const url = URL.createObjectURL(file);
   img.src = url;
-  dropzone.classList.add('hidden');
-  preview.classList.remove('hidden');
-  status.className = 'qr-status';
+  status.className = 'qr-status loading';
   status.textContent = 'Escaneando...';
 
-  // Esperar a que cargue la imagen
   img.onload = () => {
-    const canvas = document.getElementById('qr-canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    ctx.drawImage(img, 0, 0);
+    scanQrFromImage(img, url);
+  };
+}
 
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imageData.data, imageData.width, imageData.height);
+function scanQrFromImage(img, urlToRevoke) {
+  const status = document.getElementById('qr-status');
+  const canvas = document.getElementById('qr-canvas');
+  const ctx = canvas.getContext('2d');
 
-    if (code && code.data) {
-      const parsed = parseOtpAuthUri(code.data);
-      if (parsed) {
-        status.className = 'qr-status success';
-        status.textContent = `Cuenta detectada: ${parsed.platform}`;
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  ctx.drawImage(img, 0, 0);
 
-        // Agregar cuenta automaticamente
-        setTimeout(() => {
-          addAccountFromQr(parsed);
-        }, 800);
-      } else {
-        status.className = 'qr-status error';
-        status.textContent = 'QR no contiene datos TOTP validos';
-      }
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+  if (code && code.data) {
+    const parsed = parseOtpAuthUri(code.data);
+    if (parsed) {
+      status.className = 'qr-status success';
+      status.textContent = `Cuenta detectada: ${parsed.platform}`;
+
+      setTimeout(() => {
+        addAccountFromQr(parsed);
+      }, 800);
     } else {
       status.className = 'qr-status error';
-      status.textContent = 'No se detecto un codigo QR';
+      status.textContent = 'QR no contiene datos TOTP validos';
     }
+  } else {
+    status.className = 'qr-status error';
+    status.textContent = 'No se encontro codigo QR en la imagen';
+  }
 
-    URL.revokeObjectURL(url);
-  };
+  if (urlToRevoke && urlToRevoke.startsWith('blob:')) {
+    URL.revokeObjectURL(urlToRevoke);
+  }
 }
 
 function parseOtpAuthUri(uri) {

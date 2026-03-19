@@ -21,3 +21,23 @@ chrome.action.onClicked.addListener((tab) => {
 
 // Configurar side panel para que se abra en todas las paginas
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+
+// Manejar mensajes del sidepanel
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'captureScreen') {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]) {
+        chrome.tabs.captureVisibleTab(tabs[0].windowId, { format: 'png' }, (dataUrl) => {
+          if (chrome.runtime.lastError) {
+            sendResponse({ error: chrome.runtime.lastError.message });
+          } else {
+            sendResponse({ dataUrl });
+          }
+        });
+      } else {
+        sendResponse({ error: 'No hay pestana activa' });
+      }
+    });
+    return true; // Mantener el canal abierto para respuesta asincrona
+  }
+});
