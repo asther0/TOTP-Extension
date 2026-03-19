@@ -90,7 +90,7 @@ function render() {
 
     return `
       <div class="account-card" data-index="${realIndex}">
-        <div class="account-header">
+        <div class="account-info">
           <div class="account-platform">${escapeHtml(acc.platform)}</div>
           <div class="account-name">${escapeHtml(acc.name)}</div>
         </div>
@@ -105,8 +105,8 @@ function render() {
             <span class="timer-text">${timeLeft}</span>
           </div>
           <div class="code">${formatCode(code)}</div>
-          <button class="copy-btn" data-index="${realIndex}">Copiar</button>
         </div>
+        <div class="copied-feedback">Copiado!</div>
       </div>
     `;
   }).join('');
@@ -153,26 +153,15 @@ function escapeHtml(text) {
 
 // Listeners de tarjetas
 function setupCardListeners() {
-  // Click en tarjeta
   document.querySelectorAll('.account-card').forEach(card => {
-    card.addEventListener('click', e => {
-      if (e.target.closest('.copy-btn')) return;
+    card.addEventListener('click', () => {
       copyCode(parseInt(card.dataset.index), card);
-    });
-  });
-
-  // Boton copiar
-  document.querySelectorAll('.copy-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      const card = btn.closest('.account-card');
-      copyCode(parseInt(btn.dataset.index), card, btn);
     });
   });
 }
 
 // Copiar codigo
-async function copyCode(index, card, btn) {
+async function copyCode(index, card) {
   const account = state.accounts[index];
   if (!account) return;
 
@@ -183,16 +172,7 @@ async function copyCode(index, card, btn) {
 
     // Feedback visual
     card.classList.add('copied');
-    setTimeout(() => card.classList.remove('copied'), 2000);
-
-    if (btn) {
-      btn.classList.add('copied');
-      btn.textContent = 'Copiado';
-      setTimeout(() => {
-        btn.classList.remove('copied');
-        btn.textContent = 'Copiar';
-      }, 2000);
-    }
+    setTimeout(() => card.classList.remove('copied'), 1500);
   } catch (e) {
     console.error('Error copiando:', e);
   }

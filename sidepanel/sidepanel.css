@@ -112,23 +112,30 @@ main {
   padding: 16px;
   margin-bottom: 12px;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .account-card:hover {
   border-color: var(--primary);
+  background: var(--bg-secondary);
 }
 
 .account-card:active {
-  transform: scale(0.99);
+  transform: scale(0.98);
 }
 
 .account-card.copied {
   border-color: var(--success);
-  background: linear-gradient(to right, rgba(34, 197, 94, 0.05), transparent);
 }
 
-.account-header {
+.account-card.copied .copied-feedback {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.account-info {
   margin-bottom: 14px;
 }
 
@@ -142,6 +149,26 @@ main {
 .account-name {
   font-size: 13px;
   color: var(--text-muted);
+}
+
+/* Copied Feedback */
+.copied-feedback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(34, 197, 94, 0.95);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
+  border-radius: 11px;
 }
 
 /* Code Row */
@@ -206,32 +233,6 @@ main {
   color: var(--text);
   letter-spacing: 3px;
   text-align: center;
-}
-
-/* Copy Button */
-.copy-btn {
-  background: var(--bg-secondary);
-  color: var(--text-muted);
-  border: 1px solid var(--border);
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-  flex-shrink: 0;
-}
-
-.copy-btn:hover {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: white;
-}
-
-.copy-btn.copied {
-  background: var(--success);
-  border-color: var(--success);
-  color: white;
 }
 
 /* Empty State */
