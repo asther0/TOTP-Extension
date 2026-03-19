@@ -16,6 +16,11 @@ async function init() {
   render();
   setupListeners();
   startAutoUpdate();
+
+  // Mostrar contenido con transicion suave
+  requestAnimationFrame(() => {
+    document.querySelector('.container').classList.add('loaded');
+  });
 }
 
 // Cargar cuentas
