@@ -17,10 +17,11 @@ async function init() {
   setupListeners();
   startAutoUpdate();
 
-  // Mostrar contenido con transicion suave
-  requestAnimationFrame(() => {
+  // Transicion suave: ocultar loading, mostrar contenido
+  setTimeout(() => {
+    document.getElementById('loading').classList.add('hidden');
     document.querySelector('.container').classList.add('loaded');
-  });
+  }, 300);
 }
 
 // Cargar cuentas

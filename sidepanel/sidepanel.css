@@ -25,16 +25,49 @@ body {
   overflow: hidden;
 }
 
+/* Loading State */
+.loading {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.loading.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Container */
 .container {
   display: flex;
   flex-direction: column;
   height: 100%;
   opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.4s ease 0.1s, transform 0.4s ease 0.1s;
 }
 
 .container.loaded {
   opacity: 1;
-  transition: opacity 0.3s ease;
+  transform: translateY(0);
 }
 
 /* Header */
