@@ -636,6 +636,13 @@ form {
   color: var(--text-muted);
 }
 
+/* Closing Animation */
+.container.closing {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
 /* Utility */
 .hidden {
   display: none !important;
