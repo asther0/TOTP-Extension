@@ -287,6 +287,7 @@ async function handleSubmit(e) {
 
 // Settings
 function openSettings() {
+  document.querySelector('header').classList.add('hidden');
   document.getElementById('main-view').classList.add('hidden');
   document.getElementById('footer').classList.add('hidden');
   document.getElementById('settings-view').classList.remove('hidden');
@@ -295,6 +296,7 @@ function openSettings() {
 
 function closeSettings() {
   document.getElementById('settings-view').classList.add('hidden');
+  document.querySelector('header').classList.remove('hidden');
   document.getElementById('main-view').classList.remove('hidden');
   render();
 }
