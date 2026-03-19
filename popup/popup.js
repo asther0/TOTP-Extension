@@ -127,8 +127,8 @@ function renderAccounts() {
       <div class="account-card" data-index="${realIndex}" role="listitem" tabindex="0" aria-label="Cuenta ${escapeHtml(account.name)} en ${escapeHtml(account.platform)}">
         <div class="account-header">
           <div class="account-info">
-            <h3>${escapeHtml(account.name)}</h3>
-            <p>${escapeHtml(account.platform)}</p>
+            <h3>${escapeHtml(account.platform)}</h3>
+            <p>${escapeHtml(account.name)}</p>
           </div>
           <button class="account-delete" data-index="${realIndex}" title="Eliminar cuenta" aria-label="Eliminar cuenta ${escapeHtml(account.name)}">
             Eliminar

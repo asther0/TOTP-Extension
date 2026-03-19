@@ -170,8 +170,8 @@
           </button>
           <div class="totp-card-header">
             <div class="totp-card-info">
-              <div class="totp-card-name">${escapeHtml(account.name)}</div>
-              <div class="totp-card-platform">${escapeHtml(account.platform)}</div>
+              <div class="totp-card-name">${escapeHtml(account.platform)}</div>
+              <div class="totp-card-platform">${escapeHtml(account.name)}</div>
             </div>
             <div class="totp-timer">
               <svg class="totp-timer-circle" width="44" height="44" viewBox="0 0 44 44">

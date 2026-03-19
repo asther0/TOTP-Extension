@@ -211,18 +211,22 @@
 }
 
 .totp-card-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--totp-text);
-  margin-bottom: 2px;
+  margin-bottom: 3px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .totp-card-platform {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--totp-text-muted);
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Timer - Compacto */
