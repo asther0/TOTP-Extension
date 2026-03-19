@@ -8,7 +8,8 @@
     "clipboardWrite",
     "activeTab",
     "sidePanel",
-    "tabs"
+    "tabs",
+    "<all_urls>"
   ],
   "action": {
     "default_icon": {
