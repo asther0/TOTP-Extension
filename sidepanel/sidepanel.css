@@ -29,6 +29,18 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* Header */
@@ -115,6 +127,24 @@ main {
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
+  animation: slideUp 0.3s ease-out backwards;
+}
+
+.account-card:nth-child(1) { animation-delay: 0.05s; }
+.account-card:nth-child(2) { animation-delay: 0.1s; }
+.account-card:nth-child(3) { animation-delay: 0.15s; }
+.account-card:nth-child(4) { animation-delay: 0.2s; }
+.account-card:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .account-card:hover {
