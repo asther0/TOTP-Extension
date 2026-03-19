@@ -4,7 +4,6 @@
 
 const state = {
   accounts: [],
-  searchQuery: '',
   updateInterval: null
 };
 
@@ -45,23 +44,7 @@ async function saveAccounts() {
 function render() {
   const list = document.getElementById('accounts-list');
   const empty = document.getElementById('empty-state');
-  const search = document.getElementById('search-box');
   const footer = document.getElementById('footer');
-
-  // Mostrar/ocultar busqueda
-  if (state.accounts.length > 3) {
-    search.classList.remove('hidden');
-  } else {
-    search.classList.add('hidden');
-  }
-
-  // Filtrar
-  let filtered = state.accounts.filter(acc => {
-    if (!state.searchQuery) return true;
-    const q = state.searchQuery.toLowerCase();
-    return acc.platform.toLowerCase().includes(q) ||
-           acc.name.toLowerCase().includes(q);
-  });
 
   // Estado vacio
   if (state.accounts.length === 0) {
@@ -74,15 +57,8 @@ function render() {
   empty.classList.add('hidden');
   footer.classList.remove('hidden');
 
-  // Sin resultados de busqueda
-  if (filtered.length === 0) {
-    list.innerHTML = '<p class="settings-empty">No se encontraron cuentas</p>';
-    return;
-  }
-
   // Renderizar tarjetas
-  list.innerHTML = filtered.map((acc, i) => {
-    const realIndex = state.accounts.indexOf(acc);
+  list.innerHTML = state.accounts.map((acc, i) => {
     const code = generateTOTP(acc);
     const period = acc.period || 30;
     const timeLeft = getTimeRemaining(period);
@@ -95,7 +71,7 @@ function render() {
     else if (timeLeft <= 10) timerClass = 'warning';
 
     return `
-      <div class="account-card" data-index="${realIndex}">
+      <div class="account-card" data-index="${i}">
         <div class="account-info">
           <div class="account-platform">${escapeHtml(acc.platform)}</div>
           <div class="account-name">${escapeHtml(acc.name)}</div>
@@ -196,12 +172,6 @@ async function copyCode(index, card) {
 
 // Configurar listeners globales
 function setupListeners() {
-  // Busqueda
-  document.getElementById('search-input').addEventListener('input', e => {
-    state.searchQuery = e.target.value.trim();
-    render();
-  });
-
   // Boton agregar
   document.getElementById('add-btn')?.addEventListener('click', openModal);
   document.getElementById('add-first-btn')?.addEventListener('click', openModal);

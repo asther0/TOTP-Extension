@@ -118,30 +118,6 @@ main {
   flex-direction: column;
 }
 
-/* Search */
-.search-box {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.search-box input {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.15s;
-}
-
-.search-box input:focus {
-  border-color: var(--primary);
-}
-
-.search-box input::placeholder {
-  color: var(--text-muted);
-}
-
 /* Accounts List */
 .accounts-list {
   flex: 1;
