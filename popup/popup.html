@@ -11,6 +11,12 @@
     <header>
       <div class="header-content">
         <h1>TOTP Authenticator</h1>
+        <button id="settings-btn" class="settings-btn" title="Configuracion">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+          </svg>
+        </button>
       </div>
     </header>
 
@@ -32,8 +38,23 @@
     </div>
 
     <!-- Lista de códigos TOTP -->
-    <div id="accounts-list" class="accounts-list" role="list" aria-label="Lista de cuentas TOTP">
+    <div id="accounts-list" class="accounts-list" role="list">
       <!-- Se llenará dinámicamente -->
+    </div>
+
+    <!-- Vista de configuraciones -->
+    <div id="settings-view" class="settings-view hidden">
+      <div class="settings-header">
+        <button id="back-btn" class="back-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <h2>Administrar cuentas</h2>
+      </div>
+      <div id="settings-accounts" class="settings-accounts">
+        <!-- Lista de cuentas para eliminar -->
+      </div>
     </div>
 
     <!-- Mensaje cuando no hay cuentas -->

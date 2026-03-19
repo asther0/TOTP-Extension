@@ -1,16 +1,16 @@
-/* TOTP Sidebar - Diseño minimalista */
+/* TOTP Sidebar */
 
 #totp-sidebar-container {
   --totp-primary: #6366f1;
   --totp-primary-soft: #818cf8;
   --totp-success: #22c55e;
-  --totp-danger: #f87171;
+  --totp-danger: #ef4444;
+  --totp-warning: #f59e0b;
   --totp-bg: #ffffff;
   --totp-bg-hover: #f8fafc;
   --totp-text: #334155;
   --totp-text-muted: #94a3b8;
   --totp-border: #e2e8f0;
-  --totp-code: #1e293b;
 
   position: fixed;
   top: 0;
@@ -35,36 +35,36 @@
   padding: 0;
 }
 
-/* Toggle Button - Minimalista */
+/* Toggle Button */
 .totp-toggle-btn {
   position: fixed;
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 32px;
-  height: 64px;
+  width: 28px;
+  height: 56px;
   background: var(--totp-primary);
   border: none;
-  border-radius: 8px 0 0 8px;
+  border-radius: 6px 0 0 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: -2px 0 8px rgba(99, 102, 241, 0.2);
+  box-shadow: -2px 0 8px rgba(99, 102, 241, 0.15);
   transition: all 0.2s ease;
   z-index: 2147483646;
   pointer-events: auto;
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
 .totp-toggle-btn:hover {
-  width: 36px;
+  width: 32px;
   opacity: 1;
 }
 
 .totp-toggle-btn svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   stroke: white;
   stroke-width: 2;
   fill: none;
@@ -85,9 +85,9 @@
   flex-direction: column;
 }
 
-/* Header - Simple */
+/* Header */
 .totp-header {
-  padding: 20px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--totp-border);
   display: flex;
   align-items: center;
@@ -95,14 +95,13 @@
 }
 
 .totp-header h1 {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--totp-text);
-  letter-spacing: -0.01em;
 }
 
 .totp-close-btn {
-  background: transparent;
+  background: none;
   border: none;
   width: 28px;
   height: 28px;
@@ -111,8 +110,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s;
   color: var(--totp-text-muted);
+  transition: all 0.15s;
 }
 
 .totp-close-btn:hover {
@@ -127,7 +126,7 @@
   stroke-width: 2;
 }
 
-/* Search - Sutil */
+/* Search */
 .totp-search {
   padding: 12px 16px;
   border-bottom: 1px solid var(--totp-border);
@@ -142,7 +141,6 @@
   background: var(--totp-bg);
   color: var(--totp-text);
   outline: none;
-  transition: border-color 0.15s;
 }
 
 .totp-search-input:focus {
@@ -164,29 +162,23 @@
   width: 4px;
 }
 
-.totp-accounts::-webkit-scrollbar-track {
-  background: transparent;
-}
-
 .totp-accounts::-webkit-scrollbar-thumb {
   background: var(--totp-border);
   border-radius: 2px;
 }
 
-/* Account Card - Minimalista */
+/* Account Card */
 .totp-card {
   background: var(--totp-bg);
   border: 1px solid var(--totp-border);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 14px;
   margin-bottom: 8px;
   cursor: pointer;
   transition: all 0.15s ease;
-  position: relative;
 }
 
 .totp-card:hover {
-  background: var(--totp-bg-hover);
   border-color: var(--totp-primary-soft);
 }
 
@@ -199,65 +191,58 @@
 }
 
 .totp-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 10px;
-}
-
-.totp-card-info {
-  flex: 1;
-  min-width: 0;
+  margin-bottom: 12px;
 }
 
 .totp-card-name {
   font-size: 14px;
   font-weight: 600;
   color: var(--totp-text);
-  margin-bottom: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin-bottom: 2px;
 }
 
 .totp-card-platform {
   font-size: 12px;
   color: var(--totp-text-muted);
-  font-weight: 400;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-/* Timer - Compacto */
+/* Code Row */
+.totp-code-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Timer */
 .totp-timer {
   position: relative;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
-  margin-left: 10px;
 }
 
-.totp-timer-circle {
+.totp-timer svg {
+  width: 40px;
+  height: 40px;
   transform: rotate(-90deg);
 }
 
 .totp-timer-bg {
   fill: none;
   stroke: var(--totp-border);
-  stroke-width: 2.5;
+  stroke-width: 3;
 }
 
 .totp-timer-progress {
   fill: none;
   stroke: var(--totp-primary-soft);
-  stroke-width: 2.5;
+  stroke-width: 3;
   stroke-linecap: round;
-  transition: stroke-dashoffset 1s linear, stroke 0.2s;
+  transition: stroke-dashoffset 1s linear;
 }
 
 .totp-timer-progress.warning {
-  stroke: #fbbf24;
+  stroke: var(--totp-warning);
 }
 
 .totp-timer-progress.danger {
@@ -269,29 +254,23 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--totp-text-muted);
 }
 
-/* Code Display - Prominente pero limpio */
-.totp-code-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
+/* Code */
 .totp-code {
   flex: 1;
   font-size: 22px;
   font-weight: 700;
-  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-  color: var(--totp-code);
+  font-family: 'SF Mono', Consolas, monospace;
+  color: var(--totp-text);
   letter-spacing: 2px;
   text-align: center;
-  padding: 6px 0;
 }
 
+/* Copy Button */
 .totp-copy-btn {
   background: var(--totp-bg-hover);
   color: var(--totp-text-muted);
@@ -327,7 +306,7 @@
   fill: none;
 }
 
-/* Toast - Discreto */
+/* Toast */
 .totp-toast {
   position: fixed;
   bottom: 16px;
@@ -383,7 +362,6 @@
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: opacity 0.15s;
 }
 
 .totp-empty-btn:hover {
@@ -406,7 +384,6 @@
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: opacity 0.15s;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -422,53 +399,6 @@
   height: 16px;
   stroke: white;
   stroke-width: 2;
-}
-
-/* Delete Button - Muy discreto */
-.totp-delete-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 18px;
-  height: 18px;
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: all 0.15s;
-}
-
-.totp-card:hover .totp-delete-btn {
-  opacity: 0.4;
-}
-
-.totp-delete-btn:hover {
-  opacity: 1 !important;
-}
-
-.totp-delete-btn svg {
-  width: 10px;
-  height: 10px;
-  stroke: var(--totp-text-muted);
-  stroke-width: 2;
-}
-
-.totp-delete-btn:hover svg {
-  stroke: var(--totp-danger);
-}
-
-.totp-delete-btn.confirm {
-  opacity: 1 !important;
-  background: var(--totp-danger);
-  border-radius: 4px;
-}
-
-.totp-delete-btn.confirm svg {
-  stroke: white;
 }
 
 /* No results */

@@ -124,35 +124,25 @@ function renderAccounts() {
     else if (timeRemaining <= 10) timerClass = 'warning';
 
     return `
-      <div class="account-card" data-index="${realIndex}" role="listitem" tabindex="0" aria-label="Cuenta ${escapeHtml(account.name)} en ${escapeHtml(account.platform)}">
+      <div class="account-card" data-index="${realIndex}">
         <div class="account-header">
           <div class="account-info">
             <h3>${escapeHtml(account.platform)}</h3>
             <p>${escapeHtml(account.name)}</p>
           </div>
-          <button class="account-delete" data-index="${realIndex}" title="Eliminar cuenta" aria-label="Eliminar cuenta ${escapeHtml(account.name)}">
-            Eliminar
-          </button>
         </div>
-        <div class="code-container">
-          <div class="code-display" aria-label="Codigo TOTP: ${code.replace(/\s/g, '')}">${formatCode(code)}</div>
-          <button class="copy-btn" data-index="${realIndex}" aria-label="Copiar codigo de ${escapeHtml(account.name)}">
-            Copiar
-          </button>
-        </div>
-        <div class="timer-container">
-          <div class="timer-circle" role="progressbar" aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100" aria-label="Tiempo restante: ${timeRemaining} segundos">
-            <svg width="48" height="48" viewBox="0 0 48 48">
-              <circle class="timer-circle-bg" cx="24" cy="24" r="18"/>
-              <circle class="timer-circle-progress ${timerClass}" cx="24" cy="24" r="18"
-                stroke-dasharray="${circumference}"
-                stroke-dashoffset="${offset}"/>
+        <div class="code-row">
+          <div class="timer-circle">
+            <svg viewBox="0 0 36 36">
+              <circle class="timer-bg" cx="18" cy="18" r="15.5"/>
+              <circle class="timer-progress ${timerClass}" cx="18" cy="18" r="15.5"
+                stroke-dasharray="97.4"
+                stroke-dashoffset="${97.4 - (progress / 100) * 97.4}"/>
             </svg>
-            <span class="timer-text">${timeRemaining}s</span>
+            <span class="timer-text">${timeRemaining}</span>
           </div>
-          <div class="timer-bar-container">
-            <div class="timer-bar ${timerClass}" style="width: ${progress}%"></div>
-          </div>
+          <div class="code-display">${formatCode(code)}</div>
+          <button class="copy-btn" data-index="${realIndex}">Copiar</button>
         </div>
       </div>
     `;
@@ -287,6 +277,63 @@ function setupEventListeners() {
 
   // Sort
   document.getElementById('sort-select')?.addEventListener('change', handleSort);
+
+  // Settings
+  document.getElementById('settings-btn')?.addEventListener('click', openSettings);
+  document.getElementById('back-btn')?.addEventListener('click', closeSettings);
+}
+
+/**
+ * Abre la vista de configuraciones
+ */
+function openSettings() {
+  document.getElementById('accounts-list').classList.add('hidden');
+  document.getElementById('search-container')?.classList.add('hidden');
+  document.getElementById('add-account-btn-container')?.classList.add('hidden');
+  document.getElementById('empty-state')?.classList.add('hidden');
+  document.getElementById('settings-view').classList.remove('hidden');
+  renderSettingsAccounts();
+}
+
+/**
+ * Cierra la vista de configuraciones
+ */
+function closeSettings() {
+  document.getElementById('settings-view').classList.add('hidden');
+  renderAccounts();
+}
+
+/**
+ * Renderiza la lista de cuentas en configuraciones
+ */
+function renderSettingsAccounts() {
+  const container = document.getElementById('settings-accounts');
+  if (!container) return;
+
+  if (appState.accounts.length === 0) {
+    container.innerHTML = '<p class="settings-empty">No hay cuentas</p>';
+    return;
+  }
+
+  container.innerHTML = appState.accounts.map((account, index) => `
+    <div class="settings-account-item">
+      <div class="settings-account-info">
+        <span class="settings-account-name">${escapeHtml(account.platform)}</span>
+        <span class="settings-account-email">${escapeHtml(account.name)}</span>
+      </div>
+      <button class="settings-delete-btn" data-index="${index}">Eliminar</button>
+    </div>
+  `).join('');
+
+  // Event listeners para eliminar
+  container.querySelectorAll('.settings-delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const index = parseInt(btn.dataset.index);
+      if (confirm(`Eliminar ${appState.accounts[index].platform}?`)) {
+        deleteAccount(index);
+      }
+    });
+  });
 }
 
 /**
@@ -302,29 +349,11 @@ function setupAccountButtons() {
     });
   });
 
-  // Botones de eliminar (confirmacion en dos pasos)
-  document.querySelectorAll('.account-delete').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const index = parseInt(btn.dataset.index);
-      handleDeleteClick(btn, index);
-    });
-  });
-
   // Clic en tarjeta para copiar
   document.querySelectorAll('.account-card').forEach(card => {
     card.addEventListener('click', () => {
       const index = parseInt(card.dataset.index);
       copyToClipboard(index);
-    });
-
-    // Soporte para teclado (Enter y Space)
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        const index = parseInt(card.dataset.index);
-        copyToClipboard(index);
-      }
     });
   });
 }
@@ -366,37 +395,13 @@ async function copyToClipboard(index) {
 }
 
 /**
- * Maneja el clic en el boton eliminar (confirmacion en dos pasos)
- * @param {HTMLElement} btn - Boton de eliminar
- * @param {number} index - Indice de la cuenta
- */
-function handleDeleteClick(btn, index) {
-  // Si ya esta en modo confirmar, eliminar
-  if (btn.classList.contains('confirm')) {
-    deleteAccount(index);
-    return;
-  }
-
-  // Cambiar a modo confirmar
-  btn.classList.add('confirm');
-  btn.textContent = 'Confirmar';
-
-  // Volver al estado original despues de 3 segundos
-  setTimeout(() => {
-    if (btn.classList.contains('confirm')) {
-      btn.classList.remove('confirm');
-      btn.textContent = 'Eliminar';
-    }
-  }, 3000);
-}
-
-/**
  * Elimina una cuenta
  * @param {number} index - Indice de la cuenta
  */
 async function deleteAccount(index) {
   appState.accounts.splice(index, 1);
   await saveAccounts();
+  renderSettingsAccounts();
   renderAccounts();
 }
 

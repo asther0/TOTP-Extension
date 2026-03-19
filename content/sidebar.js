@@ -163,27 +163,22 @@
 
       return `
         <div class="totp-card" data-index="${realIndex}">
-          <button class="totp-delete-btn" data-index="${realIndex}" title="Eliminar">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M18 6L6 18M6 6l12 12"/>
-            </svg>
-          </button>
           <div class="totp-card-header">
             <div class="totp-card-info">
               <div class="totp-card-name">${escapeHtml(account.platform)}</div>
               <div class="totp-card-platform">${escapeHtml(account.name)}</div>
             </div>
-            <div class="totp-timer">
-              <svg class="totp-timer-circle" width="44" height="44" viewBox="0 0 44 44">
-                <circle class="totp-timer-bg" cx="22" cy="22" r="18"/>
-                <circle class="totp-timer-progress ${timerClass}" cx="22" cy="22" r="18"
-                  stroke-dasharray="${circumference}"
-                  stroke-dashoffset="${offset}"/>
-              </svg>
-              <span class="totp-timer-text">${timeLeft}s</span>
-            </div>
           </div>
           <div class="totp-code-row">
+            <div class="totp-timer">
+              <svg viewBox="0 0 36 36">
+                <circle class="totp-timer-bg" cx="18" cy="18" r="15.5"/>
+                <circle class="totp-timer-progress ${timerClass}" cx="18" cy="18" r="15.5"
+                  stroke-dasharray="97.4"
+                  stroke-dashoffset="${97.4 - (progress / 100) * 97.4}"/>
+              </svg>
+              <span class="totp-timer-text">${timeLeft}</span>
+            </div>
             <div class="totp-code">${formatCode(code)}</div>
             <button class="totp-copy-btn" data-index="${realIndex}" title="Copiar">
               <svg viewBox="0 0 24 24" fill="none">
@@ -204,28 +199,19 @@
     // Clic en tarjeta para copiar
     document.querySelectorAll('.totp-card').forEach(card => {
       card.addEventListener('click', (e) => {
-        if (e.target.closest('.totp-delete-btn') || e.target.closest('.totp-copy-btn')) return;
+        if (e.target.closest('.totp-copy-btn')) return;
         const index = parseInt(card.dataset.index);
         copyCode(index, card);
       });
     });
 
-    // Botón copiar
+    // Boton copiar
     document.querySelectorAll('.totp-copy-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const index = parseInt(btn.dataset.index);
         const card = btn.closest('.totp-card');
         copyCode(index, card, btn);
-      });
-    });
-
-    // Boton eliminar (confirmacion en dos pasos)
-    document.querySelectorAll('.totp-delete-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const index = parseInt(btn.dataset.index);
-        handleDeleteClick(btn, index);
       });
     });
   }
@@ -288,48 +274,7 @@
     setTimeout(() => toast.classList.remove('show'), 2000);
   }
 
-  // Manejar clic en boton eliminar (confirmacion en dos pasos)
-  function handleDeleteClick(btn, index) {
-    // Si ya esta en modo confirmar, eliminar
-    if (btn.classList.contains('confirm')) {
-      deleteAccount(index);
-      return;
-    }
-
-    // Cambiar a modo confirmar
-    btn.classList.add('confirm');
-    btn.innerHTML = `
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M5 12h14"/>
-      </svg>
-    `;
-    btn.title = 'Confirmar eliminacion';
-
-    // Volver al estado original despues de 3 segundos
-    setTimeout(() => {
-      if (btn && btn.classList.contains('confirm')) {
-        btn.classList.remove('confirm');
-        btn.innerHTML = `
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M18 6L6 18M6 6l12 12"/>
-          </svg>
-        `;
-        btn.title = 'Eliminar';
-      }
-    }, 3000);
-  }
-
-  // Eliminar cuenta
-  async function deleteAccount(index) {
-    const account = state.accounts[index];
-    if (!account) return;
-
-    state.accounts.splice(index, 1);
-    await chrome.storage.local.set({ accounts: state.accounts });
-    renderAccounts();
-  }
-
-  // Abrir popup de la extensión
+  // Abrir popup de la extension
   function openPopup() {
     chrome.runtime.sendMessage({ action: 'openPopup' });
   }
