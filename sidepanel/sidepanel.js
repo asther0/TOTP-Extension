@@ -313,10 +313,43 @@ function renderSettings() {
   });
 }
 
-// Auto-update
+// Auto-update (solo actualiza timers y codigos, no recrea tarjetas)
 function startAutoUpdate() {
   if (state.updateInterval) clearInterval(state.updateInterval);
-  state.updateInterval = setInterval(render, 1000);
+  state.updateInterval = setInterval(updateTimers, 1000);
+}
+
+// Actualizar solo timers y codigos sin recrear tarjetas
+function updateTimers() {
+  document.querySelectorAll('.account-card').forEach(card => {
+    const index = parseInt(card.dataset.index);
+    const account = state.accounts[index];
+    if (!account) return;
+
+    const code = generateTOTP(account);
+    const period = account.period || 30;
+    const timeLeft = getTimeRemaining(period);
+    const progress = (timeLeft / period) * 100;
+    const circumference = 2 * Math.PI * 18;
+    const offset = circumference - (progress / 100) * circumference;
+
+    // Actualizar timer
+    const timerProgress = card.querySelector('.timer-progress');
+    const timerText = card.querySelector('.timer-text');
+    if (timerProgress && timerText) {
+      timerProgress.setAttribute('stroke-dashoffset', offset);
+      timerProgress.classList.remove('warning', 'danger');
+      if (timeLeft <= 5) timerProgress.classList.add('danger');
+      else if (timeLeft <= 10) timerProgress.classList.add('warning');
+      timerText.textContent = timeLeft;
+    }
+
+    // Actualizar codigo
+    const codeEl = card.querySelector('.code');
+    if (codeEl) {
+      codeEl.textContent = formatCode(code);
+    }
+  });
 }
 
 // Limpiar al cerrar
