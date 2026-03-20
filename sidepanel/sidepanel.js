@@ -256,6 +256,12 @@ function showQrPreview() {
 async function captureScreen() {
   const status = document.getElementById('qr-status');
   const img = document.getElementById('qr-image');
+  const captureBtn = document.getElementById('capture-btn');
+  const uploadBtn = document.getElementById('upload-btn');
+
+  // Deshabilitar botones mientras procesa
+  captureBtn.disabled = true;
+  uploadBtn.disabled = true;
 
   showQrPreview();
   status.className = 'qr-status loading';
@@ -272,6 +278,8 @@ async function captureScreen() {
 
     if (response.error) {
       showError(status, 'Error de captura', response.error);
+      captureBtn.disabled = false;
+      uploadBtn.disabled = false;
       return;
     }
 
@@ -287,9 +295,19 @@ async function captureScreen() {
 
     img.onload = () => {
       scanQrFromImage(img, response.dataUrl);
+      captureBtn.disabled = false;
+      uploadBtn.disabled = false;
+    };
+
+    img.onerror = () => {
+      showError(status, 'Error al cargar', 'No se pudo procesar la imagen capturada');
+      captureBtn.disabled = false;
+      uploadBtn.disabled = false;
     };
   } catch (e) {
     showError(status, 'Error inesperado', 'No se pudo capturar la pantalla. Asegúrate de tener permisos activos.');
+    captureBtn.disabled = false;
+    uploadBtn.disabled = false;
   }
 }
 
