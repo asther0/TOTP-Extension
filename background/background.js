@@ -22,13 +22,10 @@ browserAPI.runtime.onInstalled.addListener((details) => {
 
 // Handle action click - Chrome with SidePanel vs Safari/Firefox with popup
 if (hasSidePanel) {
-  // Chrome: Open side panel
-  chrome.action.onClicked.addListener((tab) => {
-    chrome.sidePanel.open({ windowId: tab.windowId });
+  // Chrome: Configure side panel to open on action click
+  chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch((error) => {
+    console.error('Error setting side panel behavior:', error);
   });
-
-  // Configure side panel behavior
-  chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 }
 // Note: For Safari/Firefox, the popup is configured in manifest.json
 
