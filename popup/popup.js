@@ -27,7 +27,7 @@ async function init() {
 // Load accounts - cross-browser compatible
 async function loadAccounts() {
   return new Promise(resolve => {
-    const storage = typeof browser !== 'undefined' ? browser.storage : chrome.storage;
+    const storage = chrome.storage;
     storage.local.get(['accounts'], result => {
       state.accounts = result.accounts || [];
       resolve();
@@ -38,7 +38,7 @@ async function loadAccounts() {
 // Save accounts - cross-browser compatible
 async function saveAccounts() {
   return new Promise(resolve => {
-    const storage = typeof browser !== 'undefined' ? browser.storage : chrome.storage;
+    const storage = chrome.storage;
     storage.local.set({ accounts: state.accounts }, resolve);
   });
 }
@@ -266,7 +266,7 @@ async function captureScreen() {
 
   try {
     // Try using runtime message first (works with background script)
-    const runtime = typeof browser !== 'undefined' ? browser.runtime : chrome.runtime;
+    const runtime = chrome.runtime;
 
     runtime.sendMessage({ action: 'captureScreen' }, response => {
       if (runtime.lastError || !response) {
@@ -297,10 +297,10 @@ async function captureScreen() {
 // Fallback direct capture for browsers that support it
 async function tryDirectCapture(status, img) {
   try {
-    const tabs = typeof browser !== 'undefined' ? browser.tabs : chrome.tabs;
+    const tabs = chrome.tabs;
 
     tabs.captureVisibleTab(null, { format: 'png' }, dataUrl => {
-      const lastError = (typeof browser !== 'undefined' ? browser.runtime : chrome.runtime).lastError;
+      const lastError = chrome.runtime.lastError;
 
       if (lastError || !dataUrl) {
         status.className = 'qr-status error';
