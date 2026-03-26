@@ -4,7 +4,8 @@
 
 const state = {
   accounts: [],
-  updateInterval: null
+  updateInterval: null,
+  editingIndex: null
 };
 
 // Inicializar
@@ -204,6 +205,13 @@ function setupListeners() {
   // Settings
   document.getElementById('settings-btn').addEventListener('click', openSettings);
   document.getElementById('back-btn').addEventListener('click', closeSettings);
+
+  // Edit modal
+  document.getElementById('edit-form').addEventListener('submit', handleEditSubmit);
+  document.getElementById('close-edit-modal').addEventListener('click', closeEditModal);
+  document.getElementById('edit-modal').addEventListener('click', e => {
+    if (e.target.id === 'edit-modal') closeEditModal();
+  });
 
   // Export/Import
   document.getElementById('export-btn').addEventListener('click', exportAccounts);
@@ -550,9 +558,21 @@ function renderSettings() {
         <span class="settings-item-platform">${escapeHtml(acc.platform)}</span>
         <span class="settings-item-account">${escapeHtml(acc.name)}</span>
       </div>
-      <button class="delete-btn" data-index="${i}">Eliminar</button>
+      <div class="settings-item-actions">
+        <button class="edit-btn" data-index="${i}">Editar</button>
+        <button class="delete-btn" data-index="${i}">Eliminar</button>
+      </div>
     </div>
   `).join('');
+
+  // Listeners editar
+  list.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const index = parseInt(btn.dataset.index);
+      openEditModal(index);
+    });
+  });
 
   // Listeners eliminar
   list.querySelectorAll('.delete-btn').forEach(btn => {
@@ -570,6 +590,59 @@ function renderSettings() {
 
   // Setup drag and drop
   setupDragAndDrop();
+}
+
+// Edit Modal
+function openEditModal(index) {
+  state.editingIndex = index;
+  const account = state.accounts[index];
+
+  // Rellenar formulario
+  document.getElementById('edit-platform').value = account.platform;
+  document.getElementById('edit-account').value = account.name;
+
+  // Abrir modal
+  document.getElementById('edit-modal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').classList.add('hidden');
+  document.getElementById('edit-form').reset();
+  state.editingIndex = null;
+}
+
+async function handleEditSubmit(e) {
+  e.preventDefault();
+
+  if (state.editingIndex === null) return;
+
+  const platform = document.getElementById('edit-platform').value.trim();
+  const name = document.getElementById('edit-account').value.trim();
+
+  if (!platform || !name) {
+    alert('Todos los campos son obligatorios');
+    return;
+  }
+
+  // Verificar duplicado (excepto la cuenta actual)
+  const isDuplicate = state.accounts.some((acc, i) =>
+    i !== state.editingIndex &&
+    acc.platform.toLowerCase() === platform.toLowerCase() &&
+    acc.name.toLowerCase() === name.toLowerCase()
+  );
+
+  if (isDuplicate) {
+    alert('Ya existe una cuenta con esta plataforma y nombre');
+    return;
+  }
+
+  // Actualizar cuenta
+  state.accounts[state.editingIndex].platform = platform;
+  state.accounts[state.editingIndex].name = name;
+
+  await saveAccounts();
+  closeEditModal();
+  renderSettings();
 }
 
 // Drag and Drop
