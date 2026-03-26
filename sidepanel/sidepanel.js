@@ -153,10 +153,14 @@ async function copyCode(index, card) {
   try {
     await navigator.clipboard.writeText(code);
 
-    // Feedback visual
+    // Feedback visual inicial
     card.classList.add('copied');
 
+    // Intentar auto-fill
+    const autofilled = await attemptAutofill(code, card);
+
     // Auto-cerrar con transicion suave
+    const delay = autofilled ? 1600 : 1400;
     setTimeout(() => {
       const container = document.querySelector('.container');
       container.classList.add('closing');
@@ -165,9 +169,51 @@ async function copyCode(index, card) {
       setTimeout(() => {
         window.close();
       }, 400);
-    }, 1400);
+    }, delay);
   } catch (e) {
     console.error('Error copiando:', e);
+  }
+}
+
+// Intentar auto-fill en la página activa
+async function attemptAutofill(code, card) {
+  try {
+    // Obtener la tab activa
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+    if (!tab || !tab.id) {
+      return false;
+    }
+
+    // Enviar mensaje al content script
+    const response = await chrome.tabs.sendMessage(tab.id, {
+      action: 'autofillMfa',
+      code: code
+    });
+
+    if (response && response.success) {
+      // Actualizar feedback visual a "auto-completado"
+      updateFeedback(card, 'auto-filled');
+      return true;
+    } else {
+      // Mantener feedback de "copiado"
+      return false;
+    }
+  } catch (e) {
+    // Si hay error (ej: content script no cargado), solo mantener "copiado"
+    console.log('Auto-fill no disponible:', e.message);
+    return false;
+  }
+}
+
+// Actualizar feedback visual
+function updateFeedback(card, type) {
+  const feedback = card.querySelector('.copied-feedback');
+  if (!feedback) return;
+
+  if (type === 'auto-filled') {
+    feedback.textContent = '✓ Auto-completado';
+    feedback.style.background = 'rgba(34, 197, 94, 0.98)';
   }
 }
 
