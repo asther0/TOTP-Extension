@@ -3,10 +3,9 @@
  * Cross-browser compatible (Chrome, Safari, Firefox)
  */
 
-// Detect browser APIs
-const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
-const isChrome = typeof chrome !== 'undefined' && !!chrome.runtime && typeof browser === 'undefined';
-const hasSidePanel = isChrome && typeof chrome.sidePanel !== 'undefined';
+// Use chrome API directly (standard for Manifest V3)
+const browserAPI = chrome;
+const hasSidePanel = typeof chrome.sidePanel !== 'undefined';
 
 // On install
 browserAPI.runtime.onInstalled.addListener((details) => {
