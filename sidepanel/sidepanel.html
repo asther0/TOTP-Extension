@@ -157,6 +157,33 @@
 
     <canvas id="qr-canvas" hidden></canvas>
 
+    <!-- Modal de edición de cuenta -->
+    <div id="edit-modal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Editar cuenta</h2>
+          <button id="close-edit-modal" class="icon-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="tab-content active">
+          <form id="edit-form">
+            <div class="form-group">
+              <label for="edit-platform">Plataforma</label>
+              <input type="text" id="edit-platform" placeholder="Google, GitHub, AWS..." required>
+            </div>
+            <div class="form-group">
+              <label for="edit-account">Cuenta / Email</label>
+              <input type="text" id="edit-account" placeholder="usuario@email.com" required>
+            </div>
+            <button type="submit" class="btn-primary">Guardar cambios</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal de confirmación de importación -->
     <div id="import-modal" class="modal hidden">
       <div class="modal-content import-modal-content">
