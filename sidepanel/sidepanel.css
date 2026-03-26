@@ -199,12 +199,21 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   font-size: 15px;
   font-weight: 600;
   opacity: 0;
   transform: translateY(10px);
   transition: all 0.2s ease;
   border-radius: 11px;
+}
+
+.copied-feedback::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>') center/contain no-repeat;
 }
 
 /* Code Row */
