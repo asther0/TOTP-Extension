@@ -265,7 +265,9 @@ function switchTab(tabName) {
 // QR Upload
 function resetQrUpload() {
   document.getElementById('qr-file').value = '';
-  document.getElementById('qr-preview').classList.add('hidden');
+  const preview = document.getElementById('qr-preview');
+  preview.classList.add('hidden');
+  preview.classList.remove('has-error');
   document.querySelector('.qr-options').classList.remove('hidden');
   document.getElementById('qr-status').className = 'qr-status';
   document.getElementById('qr-status').textContent = '';
@@ -367,6 +369,7 @@ async function processQrImage(file) {
 
 function scanQrFromImage(img, urlToRevoke) {
   const status = document.getElementById('qr-status');
+  const preview = document.getElementById('qr-preview');
   const canvas = document.getElementById('qr-canvas');
   const ctx = canvas.getContext('2d');
 
@@ -380,6 +383,7 @@ function scanQrFromImage(img, urlToRevoke) {
   if (code && code.data) {
     const parsed = parseOtpAuthUri(code.data);
     if (parsed) {
+      preview.classList.remove('has-error');
       status.className = 'qr-status success';
       status.innerHTML = `
         <div class="status-icon">
@@ -397,9 +401,11 @@ function scanQrFromImage(img, urlToRevoke) {
         addAccountFromQr(parsed);
       }, 800);
     } else {
+      preview.classList.add('has-error');
       showError(status, 'Código QR inválido', 'El QR no contiene datos TOTP válidos. Asegúrate de escanear un código de autenticación.');
     }
   } else {
+    preview.classList.add('has-error');
     showError(status, 'No se encontró código QR', 'No se detectó ningún código QR en la imagen. Intenta con una imagen más clara o captura la pantalla completa.');
   }
 

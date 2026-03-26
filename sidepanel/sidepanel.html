@@ -122,6 +122,15 @@
             <input type="file" id="qr-file" accept="image/*" hidden>
           </div>
           <div id="qr-preview" class="qr-preview hidden">
+            <div class="qr-error-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                <rect x="14" y="14" width="7" height="7" rx="1"/>
+              </svg>
+              <span style="font-size: 12px; color: var(--text-muted);">Sin código QR detectado</span>
+            </div>
             <img id="qr-image" alt="QR Preview">
             <div id="qr-status" class="qr-status"></div>
             <button type="button" id="qr-retry" class="btn-secondary">
