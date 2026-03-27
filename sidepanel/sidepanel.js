@@ -178,17 +178,12 @@ async function copyCode(index, card) {
 // Intentar auto-fill en la página activa
 async function attemptAutofill(code, card) {
   try {
-    console.log('[TOTP] Intentando auto-fill...');
-
     // Obtener la tab activa
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
     if (!tab || !tab.id) {
-      console.log('[TOTP] No hay tab activa');
       return false;
     }
-
-    console.log(`[TOTP] Enviando código a tab ${tab.id}: ${tab.url}`);
 
     // Enviar mensaje al content script
     const response = await chrome.tabs.sendMessage(tab.id, {
@@ -196,21 +191,16 @@ async function attemptAutofill(code, card) {
       code: code
     });
 
-    console.log('[TOTP] Respuesta del content script:', response);
-
     if (response && response.success) {
       // Actualizar feedback visual a "auto-completado"
-      console.log('[TOTP] ✓ Auto-fill exitoso');
       updateFeedback(card, 'auto-filled');
       return true;
     } else {
       // Mantener feedback de "copiado"
-      console.log('[TOTP] ✗ Auto-fill falló o campo no encontrado');
       return false;
     }
   } catch (e) {
     // Si hay error (ej: content script no cargado), solo mantener "copiado"
-    console.log('[TOTP] ✗ Auto-fill no disponible:', e.message);
     return false;
   }
 }

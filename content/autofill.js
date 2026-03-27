@@ -29,11 +29,8 @@ const MFA_PATTERNS = {
  * Busca campos de MFA en la página
  */
 function findMfaField() {
-  console.log('[TOTP Autofill] Buscando campo MFA...');
-
   // Buscar inputs de texto/número/tel que estén visibles
   const inputs = Array.from(document.querySelectorAll('input[type="text"], input[type="number"], input[type="tel"], input:not([type])'));
-  console.log(`[TOTP Autofill] Encontrados ${inputs.length} inputs en la página`);
 
   for (const input of inputs) {
     // Verificar si el input está visible
@@ -53,31 +50,26 @@ function findMfaField() {
 
     // Verificar patrones en ID
     if (MFA_PATTERNS.ids.some(pattern => id.includes(pattern))) {
-      console.log(`[TOTP Autofill] ✓ Campo encontrado por ID: "${id}"`);
       return input;
     }
 
     // Verificar patrones en name
     if (MFA_PATTERNS.names.some(pattern => name.includes(pattern))) {
-      console.log(`[TOTP Autofill] ✓ Campo encontrado por NAME: "${name}"`);
       return input;
     }
 
     // Verificar patrones en placeholder
     if (MFA_PATTERNS.placeholders.some(pattern => placeholder.includes(pattern))) {
-      console.log(`[TOTP Autofill] ✓ Campo encontrado por PLACEHOLDER: "${placeholder}"`);
       return input;
     }
 
     // Verificar patrones en aria-label
     if (MFA_PATTERNS.ariaLabels.some(pattern => ariaLabel.includes(pattern))) {
-      console.log(`[TOTP Autofill] ✓ Campo encontrado por ARIA-LABEL: "${ariaLabel}"`);
       return input;
     }
 
     // Verificar autocomplete="one-time-code"
     if (autocomplete === 'one-time-code' || autocomplete === 'otp') {
-      console.log(`[TOTP Autofill] ✓ Campo encontrado por AUTOCOMPLETE: "${autocomplete}"`);
       return input;
     }
 
@@ -99,7 +91,6 @@ function findMfaField() {
     }
   }
 
-  console.log('[TOTP Autofill] ✗ No se encontró ningún campo MFA en la página');
   return null;
 }
 
@@ -111,8 +102,6 @@ function findMultipleDigitFields(firstField) {
   if (firstField.maxLength !== 1) {
     return null;
   }
-
-  console.log('[TOTP Autofill] Detectado campo de dígito único, buscando campos hermanos...');
 
   // Buscar campos hermanos (mismo padre o cercanos en el DOM)
   const parent = firstField.parentElement;
@@ -129,7 +118,6 @@ function findMultipleDigitFields(firstField) {
   });
 
   if (digitFields.length >= 6) {
-    console.log(`[TOTP Autofill] ✓ Encontrados ${digitFields.length} campos de dígito único`);
     return digitFields;
   }
 
@@ -141,8 +129,6 @@ function findMultipleDigitFields(firstField) {
  */
 function fillMultipleDigitFields(fields, code) {
   try {
-    console.log(`[TOTP Autofill] Rellenando ${fields.length} campos individuales con código: ${code}`);
-
     const digits = code.split('');
 
     for (let i = 0; i < Math.min(fields.length, digits.length); i++) {
@@ -169,10 +155,8 @@ function fillMultipleDigitFields(fields, code) {
     // Enfocar el último campo
     fields[Math.min(fields.length, digits.length) - 1].focus();
 
-    console.log('[TOTP Autofill] ✓ Campos individuales rellenados exitosamente');
     return true;
   } catch (e) {
-    console.error('[TOTP Autofill] ✗ Error rellenando campos múltiples:', e);
     return false;
   }
 }
@@ -189,8 +173,6 @@ function fillMfaField(field, code) {
     if (multipleFields) {
       return fillMultipleDigitFields(multipleFields, code);
     }
-
-    console.log(`[TOTP Autofill] Rellenando campo único con código: ${code}`);
 
     // Enfocar el campo
     field.focus();
@@ -212,10 +194,8 @@ function fillMfaField(field, code) {
       field.blur();
     }, 100);
 
-    console.log('[TOTP Autofill] ✓ Campo único rellenado exitosamente');
     return true;
   } catch (e) {
-    console.error('[TOTP Autofill] ✗ Error rellenando campo:', e);
     return false;
   }
 }
@@ -225,20 +205,15 @@ function fillMfaField(field, code) {
  */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'autofillMfa') {
-    console.log('[TOTP Autofill] Mensaje recibido para auto-completar');
-
     const field = findMfaField();
 
     if (field) {
       const success = fillMfaField(field, message.code);
       sendResponse({ success: true, filled: success });
     } else {
-      console.log('[TOTP Autofill] Respondiendo con error: campo no encontrado');
       sendResponse({ success: false, error: 'No se encontró campo MFA' });
     }
   }
 
   return true; // Mantener el canal abierto para respuesta asíncrona
 });
-
-console.log('[TOTP Autofill] Content script cargado y listo');
