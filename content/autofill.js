@@ -104,13 +104,93 @@ function findMfaField() {
 }
 
 /**
+ * Detecta si hay múltiples campos de un solo dígito (común en sitios modernos)
+ */
+function findMultipleDigitFields(firstField) {
+  // Verificar si el primer campo tiene maxLength de 1
+  if (firstField.maxLength !== 1) {
+    return null;
+  }
+
+  console.log('[TOTP Autofill] Detectado campo de dígito único, buscando campos hermanos...');
+
+  // Buscar campos hermanos (mismo padre o cercanos en el DOM)
+  const parent = firstField.parentElement;
+  const siblings = Array.from(parent.querySelectorAll('input[type="text"], input[type="number"], input[type="tel"], input:not([type])'));
+
+  // Filtrar solo campos de 1 dígito visibles
+  const digitFields = siblings.filter(input => {
+    const maxLength = parseInt(input.maxLength);
+    const rect = input.getBoundingClientRect();
+    const isVisible = rect.width > 0 && rect.height > 0 &&
+                     window.getComputedStyle(input).visibility !== 'hidden' &&
+                     window.getComputedStyle(input).display !== 'none';
+    return maxLength === 1 && isVisible;
+  });
+
+  if (digitFields.length >= 6) {
+    console.log(`[TOTP Autofill] ✓ Encontrados ${digitFields.length} campos de dígito único`);
+    return digitFields;
+  }
+
+  return null;
+}
+
+/**
+ * Rellena múltiples campos de un dígito
+ */
+function fillMultipleDigitFields(fields, code) {
+  try {
+    console.log(`[TOTP Autofill] Rellenando ${fields.length} campos individuales con código: ${code}`);
+
+    const digits = code.split('');
+
+    for (let i = 0; i < Math.min(fields.length, digits.length); i++) {
+      const field = fields[i];
+      const digit = digits[i];
+
+      // Enfocar el campo
+      field.focus();
+
+      // Establecer el valor
+      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        'value'
+      ).set;
+      nativeInputValueSetter.call(field, digit);
+
+      // Disparar eventos
+      field.dispatchEvent(new Event('input', { bubbles: true }));
+      field.dispatchEvent(new Event('change', { bubbles: true }));
+      field.dispatchEvent(new KeyboardEvent('keydown', { key: digit, bubbles: true }));
+      field.dispatchEvent(new KeyboardEvent('keyup', { key: digit, bubbles: true }));
+    }
+
+    // Enfocar el último campo
+    fields[Math.min(fields.length, digits.length) - 1].focus();
+
+    console.log('[TOTP Autofill] ✓ Campos individuales rellenados exitosamente');
+    return true;
+  } catch (e) {
+    console.error('[TOTP Autofill] ✗ Error rellenando campos múltiples:', e);
+    return false;
+  }
+}
+
+/**
  * Rellena el campo MFA con el código
  */
 function fillMfaField(field, code) {
   if (!field) return false;
 
   try {
-    console.log(`[TOTP Autofill] Rellenando campo con código: ${code}`);
+    // Verificar si hay múltiples campos de un dígito
+    const multipleFields = findMultipleDigitFields(field);
+    if (multipleFields) {
+      return fillMultipleDigitFields(multipleFields, code);
+    }
+
+    console.log(`[TOTP Autofill] Rellenando campo único con código: ${code}`);
 
     // Enfocar el campo
     field.focus();
@@ -132,7 +212,7 @@ function fillMfaField(field, code) {
       field.blur();
     }, 100);
 
-    console.log('[TOTP Autofill] ✓ Campo rellenado exitosamente');
+    console.log('[TOTP Autofill] ✓ Campo único rellenado exitosamente');
     return true;
   } catch (e) {
     console.error('[TOTP Autofill] ✗ Error rellenando campo:', e);
