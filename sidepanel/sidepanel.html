@@ -148,6 +148,7 @@
 
         <!-- Tab QR -->
         <div id="tab-qr" class="tab-content active">
+          <p class="tab-hint">Ve a Seguridad o 2FA en la cuenta que deseas vincular y muestra el codigo QR.</p>
           <div class="qr-options">
             <button type="button" id="capture-btn" class="qr-option-btn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -155,7 +156,7 @@
                 <circle cx="12" cy="13" r="4"/>
               </svg>
               <span>Capturar pantalla</span>
-              <small>Escanea QR de la pagina actual</small>
+              <small>Detecta el QR visible en tu navegador</small>
             </button>
             <button type="button" id="upload-btn" class="qr-option-btn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -164,7 +165,7 @@
                 <path d="M21 15l-5-5L5 21"/>
               </svg>
               <span>Subir imagen</span>
-              <small>Selecciona un archivo QR</small>
+              <small>Carga una captura con el QR</small>
             </button>
             <input type="file" id="qr-file" accept="image/*" hidden>
           </div>
