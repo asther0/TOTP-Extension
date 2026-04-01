@@ -433,7 +433,7 @@ async function scanQrFromImage(img, urlToRevoke) {
   const status = document.getElementById('qr-status');
   const preview = document.getElementById('qr-preview');
   const canvas = document.getElementById('qr-canvas');
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
   canvas.width = img.naturalWidth;
   canvas.height = img.naturalHeight;
