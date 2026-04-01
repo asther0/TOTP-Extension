@@ -171,23 +171,7 @@ main {
 }
 
 .account-card.copied {
-  background: var(--success);
-  border-color: var(--success);
-}
-
-.account-card.copied .account-platform,
-.account-card.copied .account-name,
-.account-card.copied .code,
-.account-card.copied .timer-text {
-  color: white;
-}
-
-.account-card.copied .timer-progress {
-  stroke: rgba(255, 255, 255, 0.4);
-}
-
-.account-card.copied .timer-bg {
-  stroke: rgba(255, 255, 255, 0.2);
+  border-color: #86EFAC;
 }
 
 .account-card.copied .copied-feedback {
@@ -225,23 +209,25 @@ main {
 .copied-feedback {
   position: absolute;
   inset: 0;
-  background: transparent;
-  color: white;
+  background: #DCFCE7;
+  color: #166534;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  font-size: 15px;
+  gap: 10px;
+  font-size: 16px;
   font-weight: 600;
+  border-radius: 11px;
   opacity: 0;
-  transform: scale(0.95);
-  transition: all 0.15s ease;
+  transform: scale(0.98);
+  transition: all 0.12s ease;
   pointer-events: none;
+  z-index: 10;
 }
 
 .copied-feedback svg {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
 }
 
 /* Code Row */
