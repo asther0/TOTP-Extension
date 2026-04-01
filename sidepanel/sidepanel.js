@@ -241,6 +241,9 @@ function setupListeners() {
   // Formulario manual
   document.getElementById('add-form').addEventListener('submit', handleSubmit);
 
+  // Auto-completar desde URI TOTP
+  document.getElementById('totp-uri').addEventListener('input', handleTotpUriInput);
+
   // Settings
   document.getElementById('settings-btn').addEventListener('click', openSettings);
   document.getElementById('back-btn').addEventListener('click', closeSettings);
@@ -592,9 +595,29 @@ async function addAccountFromQr(data) {
   render();
 }
 
+// Auto-completar desde URI TOTP
+function handleTotpUriInput(e) {
+  const uri = e.target.value.trim();
+  if (!uri.startsWith('otpauth://totp/')) return;
+
+  const parsed = parseOtpAuthUri(uri);
+  if (parsed) {
+    document.getElementById('platform').value = parsed.platform;
+    document.getElementById('account').value = parsed.name;
+    document.getElementById('secret').value = parsed.secret;
+    // Feedback visual
+    e.target.style.borderColor = '#16a34a';
+    setTimeout(() => { e.target.style.borderColor = ''; }, 1500);
+  }
+}
+
 // Manejar formulario
 async function handleSubmit(e) {
   e.preventDefault();
+
+  // Limpiar campo URI al enviar
+  const uriField = document.getElementById('totp-uri');
+  if (uriField) uriField.value = '';
 
   const statusElement = document.getElementById('manual-form-status');
   const platform = document.getElementById('platform').value.trim();
