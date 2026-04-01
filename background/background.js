@@ -35,12 +35,12 @@ if (hasSidePanel) {
 }
 
 // Handle messages from popup/sidepanel
-browserAPI.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'captureScreen') {
-    browserAPI.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]) {
-        browserAPI.tabs.captureVisibleTab(tabs[0].windowId, { format: 'png' }, (dataUrl) => {
-          const lastError = browserAPI.runtime.lastError;
+        chrome.tabs.captureVisibleTab(tabs[0].windowId, { format: 'png' }, (dataUrl) => {
+          const lastError = chrome.runtime.lastError;
           if (lastError) {
             sendResponse({ error: lastError.message });
           } else {
