@@ -228,7 +228,7 @@ async function copyCode(index, card) {
       setTimeout(() => {
         window.close();
       }, 400);
-    }, 1200);
+    }, 4000);
   } catch (e) {
     console.error('Error copiando:', e);
   }
