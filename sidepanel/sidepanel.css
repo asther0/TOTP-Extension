@@ -171,7 +171,23 @@ main {
 }
 
 .account-card.copied {
-  border-color: rgba(22, 163, 74, 0.3);
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.account-card.copied .account-platform,
+.account-card.copied .account-name,
+.account-card.copied .code,
+.account-card.copied .timer-text {
+  color: white;
+}
+
+.account-card.copied .timer-progress {
+  stroke: rgba(255, 255, 255, 0.4);
+}
+
+.account-card.copied .timer-bg {
+  stroke: rgba(255, 255, 255, 0.2);
 }
 
 .account-card.copied .copied-feedback {
@@ -208,31 +224,24 @@ main {
 /* Copied Feedback */
 .copied-feedback {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background: var(--success);
+  inset: 0;
+  background: transparent;
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  font-size: 13px;
+  gap: 8px;
+  font-size: 15px;
   font-weight: 600;
-  padding: 6px 12px;
   opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.2s ease;
-  border-radius: 8px;
+  transform: scale(0.95);
+  transition: all 0.15s ease;
   pointer-events: none;
-  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
 }
 
-.copied-feedback::before {
-  content: '';
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>') center/contain no-repeat;
+.copied-feedback svg {
+  width: 22px;
+  height: 22px;
 }
 
 /* Code Row */

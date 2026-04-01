@@ -104,7 +104,12 @@ function render() {
           </div>
           <div class="code">${formatCode(code)}</div>
         </div>
-        <div class="copied-feedback">Copiado</div>
+        <div class="copied-feedback">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+          <span>Copiado</span>
+        </div>
       </div>
     `;
   }).join('');
@@ -182,17 +187,37 @@ function setupCardListeners() {
   });
 }
 
-// Copiar codigo
+// Copiar codigo y autocompletar
 async function copyCode(index, card) {
   const account = state.accounts[index];
   if (!account) return;
 
   const code = generateTOTP(account).replace(/\s/g, '');
+  let autoFilled = false;
 
   try {
+    // Copiar al portapapeles
     await navigator.clipboard.writeText(code);
 
+    // Intentar autocompletar en la pestaña activa
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab?.id) {
+        const response = await chrome.tabs.sendMessage(tab.id, {
+          action: 'autofillMfa',
+          code: code
+        });
+        autoFilled = response?.filled === true;
+      }
+    } catch (e) {
+      // Content script no disponible en esta página
+    }
+
     // Feedback visual
+    const feedbackText = card.querySelector('.copied-feedback span');
+    if (feedbackText) {
+      feedbackText.textContent = autoFilled ? 'Autocompletado' : 'Copiado';
+    }
     card.classList.add('copied');
 
     // Auto-cerrar con transicion suave
@@ -200,11 +225,10 @@ async function copyCode(index, card) {
       const container = document.querySelector('.container');
       container.classList.add('closing');
 
-      // Cerrar despues de la animacion
       setTimeout(() => {
         window.close();
       }, 400);
-    }, 1400);
+    }, 1200);
   } catch (e) {
     console.error('Error copiando:', e);
   }
