@@ -241,9 +241,6 @@ function setupListeners() {
   // Formulario manual
   document.getElementById('add-form').addEventListener('submit', handleSubmit);
 
-  // Auto-completar desde URI TOTP
-  document.getElementById('totp-uri').addEventListener('input', handleTotpUriInput);
-
   // Settings
   document.getElementById('settings-btn').addEventListener('click', openSettings);
   document.getElementById('back-btn').addEventListener('click', closeSettings);
@@ -595,34 +592,29 @@ async function addAccountFromQr(data) {
   render();
 }
 
-// Auto-completar desde URI TOTP
-function handleTotpUriInput(e) {
-  const uri = e.target.value.trim();
-  if (!uri.startsWith('otpauth://totp/')) return;
-
-  const parsed = parseOtpAuthUri(uri);
-  if (parsed) {
-    document.getElementById('platform').value = parsed.platform;
-    document.getElementById('account').value = parsed.name;
-    document.getElementById('secret').value = parsed.secret;
-    // Feedback visual
-    e.target.style.borderColor = '#16a34a';
-    setTimeout(() => { e.target.style.borderColor = ''; }, 1500);
-  }
-}
-
 // Manejar formulario
 async function handleSubmit(e) {
   e.preventDefault();
 
-  // Limpiar campo URI al enviar
-  const uriField = document.getElementById('totp-uri');
-  if (uriField) uriField.value = '';
-
   const statusElement = document.getElementById('manual-form-status');
-  const platform = document.getElementById('platform').value.trim();
-  const name = document.getElementById('account').value.trim();
-  const secret = document.getElementById('secret').value.trim().toUpperCase().replace(/\s/g, '');
+  let platform = document.getElementById('platform').value.trim();
+  let name = document.getElementById('account').value.trim();
+  let secretInput = document.getElementById('secret').value.trim();
+
+  // Detectar si pegaron un URI TOTP
+  if (secretInput.startsWith('otpauth://totp/')) {
+    const parsed = parseOtpAuthUri(secretInput);
+    if (parsed) {
+      platform = platform || parsed.platform;
+      name = name || parsed.name;
+      secretInput = parsed.secret;
+    } else {
+      showManualFormError('Enlace TOTP invalido', 'El formato del enlace no es correcto');
+      return;
+    }
+  }
+
+  const secret = secretInput.toUpperCase().replace(/\s/g, '');
 
   if (!platform || !name || !secret) {
     showManualFormError('Campos obligatorios', 'Por favor completa todos los campos para continuar');
@@ -631,7 +623,7 @@ async function handleSubmit(e) {
 
   // Validar Base32
   if (!/^[A-Z2-7]+=*$/.test(secret) || secret.length < 16) {
-    showManualFormError('Clave secreta inválida', 'La clave debe ser Base32 con al menos 16 caracteres');
+    showManualFormError('Clave secreta invalida', 'La clave debe ser Base32 con al menos 16 caracteres');
     return;
   }
 

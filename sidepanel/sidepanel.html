@@ -196,14 +196,8 @@
 
         <!-- Tab Manual -->
         <div id="tab-manual" class="tab-content">
-          <p class="tab-hint">Copia la clave secreta o el enlace TOTP desde la configuracion 2FA de tu cuenta.</p>
+          <p class="tab-hint">Copia los datos desde la seccion Seguridad o 2FA de tu cuenta.</p>
           <form id="add-form">
-            <div class="form-group">
-              <label for="totp-uri">Enlace TOTP <span class="label-optional">(opcional)</span></label>
-              <input type="text" id="totp-uri" placeholder="otpauth://totp/... o deja vacio">
-              <small class="field-hint">Pega el enlace completo para autocompletar</small>
-            </div>
-            <div class="form-divider"><span>o completa manualmente</span></div>
             <div class="form-group">
               <label for="platform">Plataforma</label>
               <input type="text" id="platform" placeholder="Google, GitHub, AWS...">
@@ -214,7 +208,8 @@
             </div>
             <div class="form-group">
               <label for="secret">Clave secreta</label>
-              <input type="text" id="secret" placeholder="JBSWY3DPEHPK3PXP">
+              <input type="text" id="secret" placeholder="JBSWY3DPEHPK3PXP o otpauth://...">
+              <small class="field-hint">Acepta clave Base32 o enlace TOTP completo</small>
             </div>
             <div id="manual-form-status" class="qr-status hidden"></div>
             <button type="submit" class="btn-primary">Guardar</button>
