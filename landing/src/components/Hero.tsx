@@ -37,7 +37,7 @@ export function Hero({ stars }: HeroProps) {
             <div className="space-y-3 text-sm text-gray-400">
               <div className="flex items-start gap-3 justify-center lg:justify-start">
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs text-white">1</span>
-                <p className="text-left">Al activar 2FA, registra la clave secreta en tu app movil <span className="text-white">y en la extension web</span>.</p>
+                <p className="text-left">Al habilitar 2FA, registra la clave en tu app movil <span className="text-white">y en la extension</span> antes de activar.</p>
               </div>
               <div className="flex items-start gap-3 justify-center lg:justify-start">
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs text-white">2</span>
