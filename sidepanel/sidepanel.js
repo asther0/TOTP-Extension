@@ -6,7 +6,8 @@ const state = {
   accounts: [],
   updateInterval: null,
   editingIndex: null,
-  deletingIndex: null
+  deletingIndex: null,
+  visibleCodes: new Set()
 };
 
 // Inicializar
@@ -81,6 +82,7 @@ function render() {
     const progress = (timeLeft / period) * 100;
     const circumference = 2 * Math.PI * 18;
     const offset = circumference - (progress / 100) * circumference;
+    const isVisible = state.visibleCodes.has(i);
 
     let timerClass = '';
     if (timeLeft <= 5) timerClass = 'danger';
@@ -102,7 +104,20 @@ function render() {
             </svg>
             <span class="timer-text">${timeLeft}</span>
           </div>
-          <div class="code">${formatCode(code)}</div>
+          <div class="code" data-code="${code}">${isVisible ? formatCode(code) : '••• •••'}</div>
+          <button class="toggle-visibility" data-index="${i}" title="${isVisible ? 'Ocultar' : 'Mostrar'}">
+            ${isVisible ? `
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            ` : `
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            `}
+          </button>
         </div>
         <div class="copied-feedback">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
@@ -180,11 +195,33 @@ function getAvatarColor(letter) {
 
 // Listeners de tarjetas
 function setupCardListeners() {
+  // Listener para copiar (clic en el card, excepto el botón de visibilidad)
   document.querySelectorAll('.account-card').forEach(card => {
-    card.addEventListener('click', () => {
+    card.addEventListener('click', (e) => {
+      // Ignorar si se hizo clic en el botón de visibilidad
+      if (e.target.closest('.toggle-visibility')) return;
       copyCode(parseInt(card.dataset.index), card);
     });
   });
+
+  // Listener para toggle de visibilidad
+  document.querySelectorAll('.toggle-visibility').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const index = parseInt(btn.dataset.index);
+      toggleCodeVisibility(index);
+    });
+  });
+}
+
+// Toggle visibilidad del código
+function toggleCodeVisibility(index) {
+  if (state.visibleCodes.has(index)) {
+    state.visibleCodes.delete(index);
+  } else {
+    state.visibleCodes.add(index);
+  }
+  render();
 }
 
 // Copiar codigo y autocompletar
@@ -958,10 +995,12 @@ function updateTimers() {
       timerText.textContent = timeLeft;
     }
 
-    // Actualizar codigo
+    // Actualizar codigo (respetando visibilidad)
     const codeEl = card.querySelector('.code');
     if (codeEl) {
-      codeEl.textContent = formatCode(code);
+      codeEl.dataset.code = code;
+      const isVisible = state.visibleCodes.has(index);
+      codeEl.textContent = isVisible ? formatCode(code) : '••• •••';
     }
   });
 }

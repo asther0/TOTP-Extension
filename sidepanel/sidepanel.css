@@ -296,6 +296,34 @@ main {
   text-align: center;
 }
 
+/* Toggle Visibility Button */
+.toggle-visibility {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-radius: 8px;
+  transition: all 0.12s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-visibility:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.toggle-visibility:active {
+  transform: scale(0.95);
+}
+
+.toggle-visibility svg {
+  width: 20px;
+  height: 20px;
+}
+
 /* Empty State */
 .empty-state {
   position: absolute;
