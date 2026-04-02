@@ -19,7 +19,7 @@ export function Hero({ stars }: HeroProps) {
             Buscar celular, desbloquear, abrir app, encontrar cuenta, copiar codigo
           </p>
           <p className="mt-4 text-xl text-white">
-            Click en la extension. Click en copiar. Listo.
+            Click en la extension. Click en autocompletar.
           </p>
           <p className="mt-2 text-sm text-gray-500">
             Un espejo de tu authenticator, directo en el navegador.
