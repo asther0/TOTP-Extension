@@ -32,17 +32,68 @@
 }
 
 [data-theme="dark"] body,
-[data-theme="dark"] .container {
+[data-theme="dark"] .container,
+[data-theme="dark"] .loading {
   background: var(--bg);
 }
 
-[data-theme="dark"] .account-card {
+[data-theme="dark"] header,
+[data-theme="dark"] footer,
+[data-theme="dark"] .settings-header,
+[data-theme="dark"] .settings-footer,
+[data-theme="dark"] .theme-selector {
+  background: var(--bg);
+}
+
+[data-theme="dark"] .account-card,
+[data-theme="dark"] .settings-item {
   background: var(--card-bg);
 }
 
 [data-theme="dark"] .modal-content,
 [data-theme="dark"] .settings-view {
   background: var(--bg);
+}
+
+[data-theme="dark"] .empty-state {
+  background: var(--bg);
+}
+
+[data-theme="dark"] .btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--text);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background: var(--hover);
+}
+
+[data-theme="dark"] .form-group input {
+  background: var(--bg-secondary);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .modal {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="dark"] .global-timer {
+  background: var(--border);
+}
+
+[data-theme="dark"] .toggle-visibility {
+  background: var(--hover);
+}
+
+[data-theme="dark"] .qr-option-btn {
+  background: var(--bg-secondary);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .qr-option-btn:hover {
+  border-color: var(--primary);
+  background: var(--hover);
 }
 
 body {
