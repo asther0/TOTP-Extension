@@ -47,287 +47,171 @@ export function MockSidebar() {
     setTimeout(() => setCopiedIndex(null), 1500);
   };
 
-  const timerClass = timeLeft <= 5 ? "danger" : timeLeft <= 10 ? "warning" : "";
+  const timerColor =
+    timeLeft <= 5 ? "#EF4444" : timeLeft <= 10 ? "#F59E0B" : "#0a246a";
+  const timerPercent = (timeLeft / 30) * 100;
+
+  // Win2000 progress blocks
+  const totalBlocks = 14;
+  const filledBlocks = Math.round((timerPercent / 100) * totalBlocks);
 
   return (
-    <div className="mock-sidebar">
-      <style jsx>{`
-        .mock-sidebar {
-          width: 300px;
-          background: #0f172a;
-          border-radius: 16px;
-          overflow: hidden;
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-          -webkit-font-smoothing: antialiased;
-          border: 1px solid #334155;
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .sidebar-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 12px 16px;
-          border-bottom: 1px solid #334155;
-          background: #0f172a;
-        }
-
-        .sidebar-header h1 {
-          font-size: 16px;
-          font-weight: 600;
-          color: #f1f5f9;
-          margin: 0;
-        }
-
-        .icon-btn {
-          background: none;
-          border: none;
-          width: 32px;
-          height: 32px;
-          border-radius: 8px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #94a3b8;
-          transition: all 0.15s;
-        }
-
-        .icon-btn:hover {
-          background: #1e293b;
-          color: #f1f5f9;
-        }
-
-        .icon-btn svg {
-          width: 18px;
-          height: 18px;
-        }
-
-        .global-timer {
-          height: 3px;
-          background: #334155;
-          flex-shrink: 0;
-        }
-
-        .global-timer-bar {
-          height: 100%;
-          background: #5B47ED;
-          transition: width 0.1s linear;
-          border-radius: 0 2px 2px 0;
-        }
-
-        .global-timer.warning .global-timer-bar {
-          background: #F59E0B;
-        }
-
-        .global-timer.danger .global-timer-bar {
-          background: #EF4444;
-        }
-
-        .accounts-list {
-          padding: 12px 16px;
-        }
-
-        .account-card {
-          background: #1e293b;
-          border: 1px solid #334155;
-          border-radius: 12px;
-          padding: 14px 16px;
-          margin-bottom: 10px;
-          cursor: pointer;
-          transition: border-color 0.08s ease, transform 0.08s ease, box-shadow 0.08s ease;
-          position: relative;
-          overflow: hidden;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        .account-card:last-child {
-          margin-bottom: 0;
-        }
-
-        .account-card:hover {
-          border-color: #5B47ED;
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(91, 71, 237, 0.2);
-        }
-
-        .account-card.copied {
-          border-color: #86EFAC;
-        }
-
-        .account-info {
-          margin-bottom: 10px;
-        }
-
-        .account-platform {
-          font-size: 15px;
-          font-weight: 600;
-          color: #f1f5f9;
-          margin-bottom: 2px;
-        }
-
-        .account-name {
-          font-size: 13px;
-          color: #94a3b8;
-        }
-
-        .code-row {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 8px;
-        }
-
-        .code {
-          font-size: 26px;
-          font-weight: 700;
-          font-family: 'SF Mono', Consolas, monospace;
-          color: #5B47ED;
-          letter-spacing: 3px;
-        }
-
-        .toggle-visibility {
-          background: #334155;
-          border: none;
-          padding: 8px;
-          cursor: pointer;
-          color: #94a3b8;
-          border-radius: 8px;
-          transition: all 0.12s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .toggle-visibility:hover {
-          background: #475569;
-          color: #5B47ED;
-        }
-
-        .toggle-visibility svg {
-          width: 18px;
-          height: 18px;
-        }
-
-        .copied-feedback {
-          position: absolute;
-          inset: 0;
-          background: rgba(22, 163, 74, 0.2);
-          color: #86EFAC;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          font-size: 15px;
-          font-weight: 600;
-          border-radius: 11px;
-          opacity: 0;
-          transform: scale(0.98);
-          transition: all 0.12s ease;
-          pointer-events: none;
-        }
-
-        .account-card.copied .copied-feedback {
-          opacity: 1;
-          transform: scale(1);
-        }
-
-        .copied-feedback svg {
-          width: 20px;
-          height: 20px;
-        }
-
-        .sidebar-footer {
-          padding: 12px 16px;
-          border-top: 1px solid #334155;
-          background: #0f172a;
-        }
-
-        .btn-primary {
-          width: 100%;
-          background: #5B47ED;
-          color: #fff;
-          border: none;
-          padding: 12px 24px;
-          border-radius: 10px;
-          font-size: 14px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-
-        .btn-primary:hover {
-          background: #4838D1;
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(91,71,237,.3);
-        }
-
-        .security-badge {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 6px;
-          margin-top: 10px;
-        }
-
-        .security-badge svg {
-          width: 11px;
-          height: 11px;
-          color: #64748b;
-        }
-
-        .security-badge span {
-          font-size: 10px;
-          color: #64748b;
-        }
-      `}</style>
-
-      {/* Header */}
-      <div className="sidebar-header">
-        <h1>Cuentas</h1>
-        <button className="icon-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
-            <circle cx="12" cy="12" r="3"/>
-          </svg>
+    <div
+      style={{
+        width: "100%",
+        fontFamily: "'Tahoma', 'MS Sans Serif', Arial, sans-serif",
+        fontSize: "11px",
+        background: "#d4d0c8",
+      }}
+    >
+      {/* Inner sunken header */}
+      <div
+        style={{
+          background: "#d4d0c8",
+          padding: "4px",
+          borderBottom: "1px solid #808080",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <span style={{ fontWeight: "bold", fontSize: "11px" }}>Cuentas</span>
+        <button
+          style={{
+            background: "#d4d0c8",
+            border: "2px solid",
+            borderColor: "#ffffff #404040 #404040 #ffffff",
+            width: "20px",
+            height: "18px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            fontSize: "10px",
+          }}
+          title="Configuracion"
+        >
+          ⚙
         </button>
       </div>
 
-      {/* Timer bar */}
-      <div className={`global-timer ${timerClass}`}>
+      {/* Timer progress bar (Win2000 style blocks) */}
+      <div style={{ padding: "4px 4px 2px 4px" }}>
         <div
-          className="global-timer-bar"
-          style={{ width: `${(timeLeft / 30) * 100}%` }}
-        />
+          style={{
+            background: "#ffffff",
+            border: "2px solid",
+            borderColor: "#808080 #ffffff #ffffff #808080",
+            height: "14px",
+            padding: "1px",
+            display: "flex",
+            gap: "1px",
+            alignItems: "center",
+          }}
+        >
+          {Array.from({ length: totalBlocks }).map((_, i) => (
+            <div
+              key={i}
+              style={{
+                flex: 1,
+                height: "10px",
+                background: i < filledBlocks ? timerColor : "transparent",
+              }}
+            />
+          ))}
+          <span
+            style={{
+              position: "absolute",
+              fontSize: "9px",
+              color: "transparent",
+            }}
+          />
+        </div>
+        <div
+          style={{
+            textAlign: "right",
+            fontSize: "9px",
+            color: "#444",
+            marginTop: "1px",
+          }}
+        >
+          {timeLeft}s
+        </div>
       </div>
 
-      {/* Accounts */}
-      <div className="accounts-list">
+      {/* Accounts List */}
+      <div style={{ padding: "0 4px 4px 4px", display: "flex", flexDirection: "column", gap: "4px" }}>
         {FAKE_ACCOUNTS.map((account, index) => (
           <div
             key={account.platform}
             onClick={() => handleCopy(index)}
-            className={`account-card ${copiedIndex === index ? "copied" : ""}`}
+            style={{
+              background: copiedIndex === index ? "#d4f4d4" : "#ffffff",
+              border: "2px solid",
+              borderColor:
+                copiedIndex === index
+                  ? "#008000 #004000 #004000 #008000"
+                  : "#808080 #ffffff #ffffff #808080",
+              padding: "6px 8px",
+              cursor: "pointer",
+              position: "relative",
+            }}
           >
-            <div className="copied-feedback">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              Copiado
+            {copiedIndex === index && (
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "rgba(0,128,0,0.15)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                  color: "#006400",
+                  gap: "4px",
+                }}
+              >
+                <span>✓</span>
+                <span>Copiado al portapapeles</span>
+              </div>
+            )}
+            <div style={{ marginBottom: "4px" }}>
+              <span style={{ fontWeight: "bold", fontSize: "12px", color: "#000" }}>
+                {account.platform}
+              </span>
+              <br />
+              <span style={{ fontSize: "10px", color: "#444" }}>{account.account}</span>
             </div>
-            <div className="account-info">
-              <div className="account-platform">{account.platform}</div>
-              <div className="account-name">{account.account}</div>
-            </div>
-            <div className="code-row">
-              <span className="code">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span
+                style={{
+                  fontSize: "20px",
+                  fontWeight: "bold",
+                  fontFamily: "Courier New, monospace",
+                  color: "#0a246a",
+                  letterSpacing: "4px",
+                }}
+              >
                 {codes[index]?.slice(0, 3)} {codes[index]?.slice(3)}
               </span>
-              <button className="toggle-visibility" onClick={(e) => e.stopPropagation()}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                </svg>
+              <button
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  background: "#d4d0c8",
+                  border: "2px solid",
+                  borderColor: "#ffffff #404040 #404040 #ffffff",
+                  width: "22px",
+                  height: "20px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  fontSize: "10px",
+                }}
+                title="Copiar"
+              >
+                ⎘
               </button>
             </div>
           </div>
@@ -335,13 +219,42 @@ export function MockSidebar() {
       </div>
 
       {/* Footer */}
-      <div className="sidebar-footer">
-        <button className="btn-primary">+ Agregar cuenta</button>
-        <div className="security-badge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-          </svg>
+      <div
+        style={{
+          padding: "4px",
+          borderTop: "1px solid #808080",
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px",
+        }}
+      >
+        <button
+          style={{
+            width: "100%",
+            background: "#d4d0c8",
+            border: "2px solid",
+            borderColor: "#ffffff #404040 #404040 #ffffff",
+            padding: "4px 8px",
+            fontFamily: "'Tahoma', Arial, sans-serif",
+            fontSize: "11px",
+            cursor: "pointer",
+            textAlign: "center",
+            color: "#000",
+          }}
+        >
+          + Agregar cuenta
+        </button>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "4px",
+            fontSize: "9px",
+            color: "#444",
+          }}
+        >
+          <span>🔒</span>
           <span>Almacenamiento local y cifrado</span>
         </div>
       </div>
