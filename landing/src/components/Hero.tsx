@@ -6,29 +6,65 @@ interface HeroProps {
 
 export function Hero({ stars }: HeroProps) {
   return (
-    <section className="relative flex-1 flex items-center px-6 py-20 lg:py-28">
-      <div className="mx-auto max-w-4xl text-center">
+    <section className="relative flex-1 px-6 py-16 lg:py-20">
+      <div className="mx-auto max-w-4xl">
         {/* Title */}
-        <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
+        <h1 className="text-center text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
           <span className="gradient-text">2FA</span> sin sacar el celular
         </h1>
 
-        {/* Problem & Solution */}
-        <div className="mx-auto mt-8 max-w-2xl space-y-4 text-lg text-gray-400">
-          <p>
-            <span className="text-gray-500">Antes:</span> buscar celular, desbloquearlo, abrir app, encontrar cuenta, copiar codigo antes de que expire.
-          </p>
-          <p>
-            <span className="text-white font-medium">Ahora:</span> click en la extension, click en copiar. Listo.
-          </p>
+        {/* Problem & Solution Cards */}
+        <div className="mx-auto mt-12 grid max-w-3xl gap-6 md:grid-cols-2">
+          {/* Problem */}
+          <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6">
+            <div className="mb-3 flex items-center gap-2 text-red-400">
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <span className="text-sm font-semibold uppercase tracking-wide">El problema</span>
+            </div>
+            <p className="text-gray-400 leading-relaxed">
+              Buscar celular, desbloquearlo, abrir la app, encontrar la cuenta correcta, memorizar el codigo y escribirlo antes de que expire.
+            </p>
+          </div>
+
+          {/* Solution */}
+          <div className="rounded-2xl border border-green-500/20 bg-green-500/5 p-6">
+            <div className="mb-3 flex items-center gap-2 text-green-400">
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="text-sm font-semibold uppercase tracking-wide">La solucion</span>
+            </div>
+            <p className="text-gray-400 leading-relaxed">
+              Un espejo de tu authenticator en el navegador. Click en la extension, click en copiar. Tus codigos sincronizados, sin depender del celular.
+            </p>
+          </div>
+        </div>
+
+        {/* How to use */}
+        <div className="mx-auto mt-16 max-w-2xl">
+          <h2 className="mb-6 text-center text-xl font-semibold text-white">Como funciona</h2>
+          <div className="space-y-4 text-gray-400">
+            <div className="flex gap-4">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-medium text-white">1</span>
+              <p>Cuando actives 2FA en cualquier servicio, escanea el QR o copia la clave secreta <span className="text-white">tanto en tu app movil como en la extension</span>.</p>
+            </div>
+            <div className="flex gap-4">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-medium text-white">2</span>
+              <p>Ambos generaran los mismos codigos. Usa el que tengas mas a mano.</p>
+            </div>
+            <div className="flex gap-4">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-medium text-white">3</span>
+              <p>Puedes exportar e importar tus cuentas si necesitas usarlas en otro navegador.</p>
+            </div>
+          </div>
         </div>
 
         {/* CTA Buttons */}
-        <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
+        <div className="mt-14 flex flex-col items-center justify-center gap-4 sm:flex-row">
           {/* Chrome - Disabled */}
-          <div
-            className="inline-flex cursor-not-allowed items-center gap-3 rounded-2xl bg-white/10 px-8 py-4 text-base font-semibold text-white/50"
-          >
+          <div className="inline-flex cursor-not-allowed items-center gap-3 rounded-2xl bg-white/10 px-8 py-4 text-base font-semibold text-white/50">
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 0C8.21 0 4.831 1.757 2.632 4.501l3.953 6.848A5.454 5.454 0 0 1 12 6.545h10.691A12 12 0 0 0 12 0zM1.931 5.47A11.943 11.943 0 0 0 0 12c0 6.012 4.42 10.991 10.189 11.864l3.953-6.847a5.45 5.45 0 0 1-6.865-2.29L1.931 5.47zm13.342 2.166a5.446 5.446 0 0 1 1.819 7.911l-3.953 6.848A12.048 12.048 0 0 0 24 12c0-.653-.055-1.291-.145-1.918H15.273a5.387 5.387 0 0 1 0-2.446zM12 16.364a4.364 4.364 0 1 0 0-8.728 4.364 4.364 0 0 0 0 8.728z" />
             </svg>
