@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Hero } from "@/components/Hero";
-import { Demo } from "@/components/Demo";
 import { Footer } from "@/components/Footer";
 
 export default function Home() {
@@ -20,9 +19,8 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen flex flex-col">
       <Hero stars={stars} />
-      <Demo />
       <Footer />
     </main>
   );

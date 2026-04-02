@@ -6,7 +6,7 @@ interface HeroProps {
 
 export function Hero({ stars }: HeroProps) {
   return (
-    <section className="relative px-6 py-20 lg:py-28">
+    <section className="relative flex-1 flex items-center px-6 py-20 lg:py-28">
       <div className="mx-auto max-w-4xl text-center">
         {/* Title */}
         <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
