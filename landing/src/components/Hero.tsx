@@ -8,10 +8,11 @@ interface HeroProps {
 
 export function Hero({ stars }: HeroProps) {
   return (
-    <div className="flex h-screen">
+    <div className="min-h-screen flex flex-col">
       {/* Main content */}
-      <div className="flex-1 flex items-center justify-center px-8 lg:px-16">
-        <div className="max-w-lg">
+      <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20 px-6 py-12 lg:py-0">
+        {/* Left: Text */}
+        <div className="max-w-md text-center lg:text-left">
           {/* Title */}
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
             <span className="gradient-text">2FA</span> sin sacar el celular
@@ -34,24 +35,24 @@ export function Hero({ stars }: HeroProps) {
           <div className="mt-10">
             <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-gray-500">Como funciona</h2>
             <div className="space-y-2.5 text-sm text-gray-400">
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-3 justify-center lg:justify-start">
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs text-white">1</span>
-                <p>Al activar 2FA en cualquier plataforma, registra la clave en tu app movil <span className="text-white">y</span> en la extension.</p>
+                <p className="text-left">Al activar 2FA en cualquier plataforma, registra la clave en tu app movil <span className="text-white">y</span> en la extension.</p>
               </div>
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-3 justify-center lg:justify-start">
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs text-white">2</span>
-                <p>Ambos generan los mismos codigos. Usa el que prefieras.</p>
+                <p className="text-left">Ambos generan los mismos codigos. Usa el que prefieras.</p>
               </div>
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-3 justify-center lg:justify-start">
                 <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs text-white">3</span>
-                <p>Exporta e importa para usar en otros navegadores.</p>
+                <p className="text-left">Exporta e importa para usar en otros navegadores.</p>
               </div>
             </div>
           </div>
 
           {/* CTA Buttons */}
-          <div className="mt-10 flex flex-wrap items-center gap-3">
-            <div className="inline-flex cursor-not-allowed items-center gap-2 rounded-xl bg-white/10 px-6 py-3 text-sm font-medium text-white/50">
+          <div className="mt-10 flex flex-wrap items-center gap-3 justify-center lg:justify-start">
+            <div className="inline-flex cursor-not-allowed items-center gap-2 rounded-xl bg-white/10 px-5 py-2.5 text-sm font-medium text-white/50">
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 0C8.21 0 4.831 1.757 2.632 4.501l3.953 6.848A5.454 5.454 0 0 1 12 6.545h10.691A12 12 0 0 0 12 0zM1.931 5.47A11.943 11.943 0 0 0 0 12c0 6.012 4.42 10.991 10.189 11.864l3.953-6.847a5.45 5.45 0 0 1-6.865-2.29L1.931 5.47zm13.342 2.166a5.446 5.446 0 0 1 1.819 7.911l-3.953 6.848A12.048 12.048 0 0 0 24 12c0-.653-.055-1.291-.145-1.918H15.273a5.387 5.387 0 0 1 0-2.446zM12 16.364a4.364 4.364 0 1 0 0-8.728 4.364 4.364 0 0 0 0 8.728z" />
               </svg>
@@ -62,7 +63,7 @@ export function Hero({ stars }: HeroProps) {
               href="https://github.com/asther0/TOTP-Extension"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-6 py-3 text-sm font-medium text-white transition-all hover:border-white/40 hover:bg-white/10"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-5 py-2.5 text-sm font-medium text-white transition-all hover:border-white/40 hover:bg-white/10"
             >
               <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                 <path
@@ -80,11 +81,14 @@ export function Hero({ stars }: HeroProps) {
             </a>
           </div>
         </div>
-      </div>
 
-      {/* Sidebar - fixed to right */}
-      <div className="hidden lg:block border-l border-white/10 shadow-2xl">
-        <MockSidebar />
+        {/* Right: Mock Sidebar as preview */}
+        <div className="relative">
+          <div className="absolute -inset-8 rounded-3xl bg-gradient-to-br from-[#5B47ED]/20 via-purple-500/10 to-transparent blur-3xl" />
+          <div className="relative">
+            <MockSidebar />
+          </div>
+        </div>
       </div>
     </div>
   );

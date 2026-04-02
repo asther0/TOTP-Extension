@@ -11,7 +11,6 @@ const FAKE_ACCOUNTS: Account[] = [
   { platform: "AWS", account: "admin@empresa.com" },
   { platform: "Vercel", account: "deploy@proyecto.dev" },
   { platform: "GitHub", account: "dev@github.com" },
-  { platform: "Google", account: "trabajo@gmail.com" },
 ];
 
 function generateCode(): string {
@@ -19,7 +18,7 @@ function generateCode(): string {
 }
 
 export function MockSidebar() {
-  const [codes, setCodes] = useState<string[]>(["000000", "000000", "000000", "000000"]);
+  const [codes, setCodes] = useState<string[]>(["000000", "000000", "000000"]);
   const [timeLeft, setTimeLeft] = useState(30);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -54,13 +53,14 @@ export function MockSidebar() {
     <div className="mock-sidebar">
       <style jsx>{`
         .mock-sidebar {
-          width: 320px;
-          height: 100%;
-          background: #ffffff;
-          display: flex;
-          flex-direction: column;
+          width: 300px;
+          background: #0f172a;
+          border-radius: 16px;
+          overflow: hidden;
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
           -webkit-font-smoothing: antialiased;
+          border: 1px solid #334155;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
         .sidebar-header {
@@ -68,13 +68,14 @@ export function MockSidebar() {
           align-items: center;
           justify-content: space-between;
           padding: 12px 16px;
-          border-bottom: 1px solid #e2e8f0;
+          border-bottom: 1px solid #334155;
+          background: #0f172a;
         }
 
         .sidebar-header h1 {
           font-size: 16px;
           font-weight: 600;
-          color: #1e293b;
+          color: #f1f5f9;
           margin: 0;
         }
 
@@ -88,13 +89,13 @@ export function MockSidebar() {
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #64748b;
+          color: #94a3b8;
           transition: all 0.15s;
         }
 
         .icon-btn:hover {
-          background: #f8fafc;
-          color: #1e293b;
+          background: #1e293b;
+          color: #f1f5f9;
         }
 
         .icon-btn svg {
@@ -104,7 +105,7 @@ export function MockSidebar() {
 
         .global-timer {
           height: 3px;
-          background: #e2e8f0;
+          background: #334155;
           flex-shrink: 0;
         }
 
@@ -124,14 +125,12 @@ export function MockSidebar() {
         }
 
         .accounts-list {
-          flex: 1;
-          overflow-y: auto;
           padding: 12px 16px;
         }
 
         .account-card {
-          background: #FFFFFF;
-          border: 1px solid #e2e8f0;
+          background: #1e293b;
+          border: 1px solid #334155;
           border-radius: 12px;
           padding: 14px 16px;
           margin-bottom: 10px;
@@ -139,13 +138,17 @@ export function MockSidebar() {
           transition: border-color 0.08s ease, transform 0.08s ease, box-shadow 0.08s ease;
           position: relative;
           overflow: hidden;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .account-card:last-child {
+          margin-bottom: 0;
         }
 
         .account-card:hover {
           border-color: #5B47ED;
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(91, 71, 237, 0.15);
+          box-shadow: 0 4px 12px rgba(91, 71, 237, 0.2);
         }
 
         .account-card.copied {
@@ -159,13 +162,13 @@ export function MockSidebar() {
         .account-platform {
           font-size: 15px;
           font-weight: 600;
-          color: #1e293b;
+          color: #f1f5f9;
           margin-bottom: 2px;
         }
 
         .account-name {
           font-size: 13px;
-          color: #64748b;
+          color: #94a3b8;
         }
 
         .code-row {
@@ -176,7 +179,7 @@ export function MockSidebar() {
         }
 
         .code {
-          font-size: 28px;
+          font-size: 26px;
           font-weight: 700;
           font-family: 'SF Mono', Consolas, monospace;
           color: #5B47ED;
@@ -184,11 +187,11 @@ export function MockSidebar() {
         }
 
         .toggle-visibility {
-          background: #f8fafc;
+          background: #334155;
           border: none;
           padding: 8px;
           cursor: pointer;
-          color: #64748b;
+          color: #94a3b8;
           border-radius: 8px;
           transition: all 0.12s ease;
           display: flex;
@@ -197,20 +200,20 @@ export function MockSidebar() {
         }
 
         .toggle-visibility:hover {
-          background: #f1f5f9;
+          background: #475569;
           color: #5B47ED;
         }
 
         .toggle-visibility svg {
-          width: 20px;
-          height: 20px;
+          width: 18px;
+          height: 18px;
         }
 
         .copied-feedback {
           position: absolute;
           inset: 0;
-          background: #DCFCE7;
-          color: #166534;
+          background: rgba(22, 163, 74, 0.2);
+          color: #86EFAC;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -236,7 +239,8 @@ export function MockSidebar() {
 
         .sidebar-footer {
           padding: 12px 16px;
-          border-top: 1px solid #e2e8f0;
+          border-top: 1px solid #334155;
+          background: #0f172a;
         }
 
         .btn-primary {
@@ -244,19 +248,18 @@ export function MockSidebar() {
           background: #5B47ED;
           color: #fff;
           border: none;
-          padding: 14px 28px;
+          padding: 12px 24px;
           border-radius: 10px;
-          font-size: 15px;
+          font-size: 14px;
           font-weight: 500;
           cursor: pointer;
           transition: all 0.2s ease;
-          box-shadow: 0 1px 2px rgba(0,0,0,.05);
         }
 
         .btn-primary:hover {
           background: #4838D1;
           transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(91,71,237,.25);
+          box-shadow: 0 4px 12px rgba(91,71,237,.3);
         }
 
         .security-badge {
