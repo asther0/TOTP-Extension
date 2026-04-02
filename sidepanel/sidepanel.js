@@ -269,15 +269,35 @@ async function copyCode(index, card) {
     // Intentar autocompletar en la pestaña activa
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (tab?.id) {
-        const response = await chrome.tabs.sendMessage(tab.id, {
-          action: 'autofillMfa',
-          code: code
-        });
-        autoFilled = response?.filled === true;
+      if (tab?.id && !tab.url?.startsWith('chrome') && !tab.url?.startsWith('edge')) {
+        // Intentar enviar mensaje al content script
+        try {
+          const response = await chrome.tabs.sendMessage(tab.id, {
+            action: 'autofillMfa',
+            code: code
+          });
+          autoFilled = response?.filled === true;
+        } catch (e) {
+          // Content script no cargado, inyectarlo e intentar de nuevo
+          try {
+            await chrome.scripting.executeScript({
+              target: { tabId: tab.id },
+              files: ['content/autofill.js']
+            });
+            // Esperar un momento y reintentar
+            await new Promise(r => setTimeout(r, 100));
+            const response = await chrome.tabs.sendMessage(tab.id, {
+              action: 'autofillMfa',
+              code: code
+            });
+            autoFilled = response?.filled === true;
+          } catch (e2) {
+            // No se pudo inyectar (página restringida)
+          }
+        }
       }
     } catch (e) {
-      // Content script no disponible en esta página
+      // Error general
     }
 
     // Feedback visual
