@@ -4,15 +4,14 @@ import { useState, useEffect } from "react";
 
 interface Account {
   platform: string;
-  email: string;
-  color: string;
+  account: string;
 }
 
 const FAKE_ACCOUNTS: Account[] = [
-  { platform: "AWS", email: "admin@empresa.com", color: "#FF9900" },
-  { platform: "Vercel", email: "deploy@proyecto.dev", color: "#000000" },
-  { platform: "GitHub", email: "dev@github.com", color: "#24292e" },
-  { platform: "Google", email: "trabajo@gmail.com", color: "#4285F4" },
+  { platform: "AWS", account: "admin@empresa.com" },
+  { platform: "Vercel", account: "deploy@proyecto.dev" },
+  { platform: "GitHub", account: "dev@github.com" },
+  { platform: "Google", account: "trabajo@gmail.com" },
 ];
 
 function generateCode(): string {
@@ -49,81 +48,298 @@ export function MockSidebar() {
     setTimeout(() => setCopiedIndex(null), 1500);
   };
 
+  const timerClass = timeLeft <= 5 ? "danger" : timeLeft <= 10 ? "warning" : "";
+
   return (
-    <div className="w-[320px] shrink-0 rounded-2xl border border-white/10 bg-[#0f172a] shadow-2xl overflow-hidden">
+    <div className="mock-sidebar">
+      <style jsx>{`
+        .mock-sidebar {
+          width: 320px;
+          height: 100%;
+          background: #ffffff;
+          display: flex;
+          flex-direction: column;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          -webkit-font-smoothing: antialiased;
+        }
+
+        .sidebar-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 12px 16px;
+          border-bottom: 1px solid #e2e8f0;
+        }
+
+        .sidebar-header h1 {
+          font-size: 16px;
+          font-weight: 600;
+          color: #1e293b;
+          margin: 0;
+        }
+
+        .icon-btn {
+          background: none;
+          border: none;
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #64748b;
+          transition: all 0.15s;
+        }
+
+        .icon-btn:hover {
+          background: #f8fafc;
+          color: #1e293b;
+        }
+
+        .icon-btn svg {
+          width: 18px;
+          height: 18px;
+        }
+
+        .global-timer {
+          height: 3px;
+          background: #e2e8f0;
+          flex-shrink: 0;
+        }
+
+        .global-timer-bar {
+          height: 100%;
+          background: #5B47ED;
+          transition: width 0.1s linear;
+          border-radius: 0 2px 2px 0;
+        }
+
+        .global-timer.warning .global-timer-bar {
+          background: #F59E0B;
+        }
+
+        .global-timer.danger .global-timer-bar {
+          background: #EF4444;
+        }
+
+        .accounts-list {
+          flex: 1;
+          overflow-y: auto;
+          padding: 12px 16px;
+        }
+
+        .account-card {
+          background: #FFFFFF;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 14px 16px;
+          margin-bottom: 10px;
+          cursor: pointer;
+          transition: border-color 0.08s ease, transform 0.08s ease, box-shadow 0.08s ease;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .account-card:hover {
+          border-color: #5B47ED;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(91, 71, 237, 0.15);
+        }
+
+        .account-card.copied {
+          border-color: #86EFAC;
+        }
+
+        .account-info {
+          margin-bottom: 10px;
+        }
+
+        .account-platform {
+          font-size: 15px;
+          font-weight: 600;
+          color: #1e293b;
+          margin-bottom: 2px;
+        }
+
+        .account-name {
+          font-size: 13px;
+          color: #64748b;
+        }
+
+        .code-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+        }
+
+        .code {
+          font-size: 28px;
+          font-weight: 700;
+          font-family: 'SF Mono', Consolas, monospace;
+          color: #5B47ED;
+          letter-spacing: 3px;
+        }
+
+        .toggle-visibility {
+          background: #f8fafc;
+          border: none;
+          padding: 8px;
+          cursor: pointer;
+          color: #64748b;
+          border-radius: 8px;
+          transition: all 0.12s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .toggle-visibility:hover {
+          background: #f1f5f9;
+          color: #5B47ED;
+        }
+
+        .toggle-visibility svg {
+          width: 20px;
+          height: 20px;
+        }
+
+        .copied-feedback {
+          position: absolute;
+          inset: 0;
+          background: #DCFCE7;
+          color: #166534;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          font-size: 15px;
+          font-weight: 600;
+          border-radius: 11px;
+          opacity: 0;
+          transform: scale(0.98);
+          transition: all 0.12s ease;
+          pointer-events: none;
+        }
+
+        .account-card.copied .copied-feedback {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        .copied-feedback svg {
+          width: 20px;
+          height: 20px;
+        }
+
+        .sidebar-footer {
+          padding: 12px 16px;
+          border-top: 1px solid #e2e8f0;
+        }
+
+        .btn-primary {
+          width: 100%;
+          background: #5B47ED;
+          color: #fff;
+          border: none;
+          padding: 14px 28px;
+          border-radius: 10px;
+          font-size: 15px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          box-shadow: 0 1px 2px rgba(0,0,0,.05);
+        }
+
+        .btn-primary:hover {
+          background: #4838D1;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(91,71,237,.25);
+        }
+
+        .security-badge {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          margin-top: 10px;
+        }
+
+        .security-badge svg {
+          width: 11px;
+          height: 11px;
+          color: #64748b;
+        }
+
+        .security-badge span {
+          font-size: 10px;
+          color: #64748b;
+        }
+      `}</style>
+
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-        <span className="text-sm font-semibold text-white">Cuentas</span>
-        <div className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-500 hover:bg-white/5">
-          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <div className="sidebar-header">
+        <h1>Cuentas</h1>
+        <button className="icon-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
             <circle cx="12" cy="12" r="3"/>
           </svg>
-        </div>
+        </button>
       </div>
 
       {/* Timer bar */}
-      <div className="h-[3px] bg-white/10">
+      <div className={`global-timer ${timerClass}`}>
         <div
-          className={`h-full transition-all duration-1000 ${timeLeft <= 5 ? "bg-red-500" : timeLeft <= 10 ? "bg-yellow-500" : "bg-[#5B47ED]"}`}
+          className="global-timer-bar"
           style={{ width: `${(timeLeft / 30) * 100}%` }}
         />
       </div>
 
       {/* Accounts */}
-      <div className="p-3 space-y-2 max-h-[320px] overflow-y-auto">
+      <div className="accounts-list">
         {FAKE_ACCOUNTS.map((account, index) => (
           <div
             key={account.platform}
             onClick={() => handleCopy(index)}
-            className={`relative cursor-pointer rounded-xl border p-3 transition-all ${
-              copiedIndex === index
-                ? "border-green-500/50 bg-green-500/10"
-                : "border-white/10 bg-white/5 hover:border-[#5B47ED]/50 hover:bg-white/[0.07]"
-            }`}
+            className={`account-card ${copiedIndex === index ? "copied" : ""}`}
           >
-            {/* Copied overlay */}
-            {copiedIndex === index && (
-              <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-green-500/20 text-green-400">
-                <svg className="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <div className="copied-feedback">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              Copiado
+            </div>
+            <div className="account-info">
+              <div className="account-platform">{account.platform}</div>
+              <div className="account-name">{account.account}</div>
+            </div>
+            <div className="code-row">
+              <span className="code">
+                {codes[index]?.slice(0, 3)} {codes[index]?.slice(3)}
+              </span>
+              <button className="toggle-visibility" onClick={(e) => e.stopPropagation()}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
                 </svg>
-                <span className="text-sm font-semibold">Copiado</span>
-              </div>
-            )}
-
-            <div className={copiedIndex === index ? "opacity-0" : ""}>
-              {/* Account info */}
-              <div className="mb-2">
-                <div className="text-sm font-semibold text-white">{account.platform}</div>
-                <div className="text-xs text-gray-500">{account.email}</div>
-              </div>
-
-              {/* Code */}
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-2xl font-bold tracking-wider text-[#5B47ED]">
-                  {codes[index]?.slice(0, 3)} {codes[index]?.slice(3)}
-                </span>
-                <button className="rounded-lg bg-white/10 px-2.5 py-1 text-xs font-medium text-white hover:bg-white/20">
-                  Copiar
-                </button>
-              </div>
+              </button>
             </div>
           </div>
         ))}
       </div>
 
       {/* Footer */}
-      <div className="border-t border-white/10 p-3">
-        <button className="w-full rounded-xl bg-[#5B47ED] py-2.5 text-sm font-semibold text-white hover:bg-[#4838D1]">
-          + Agregar cuenta
-        </button>
-        <div className="mt-3 flex items-center justify-center gap-1.5 text-[10px] text-gray-500">
-          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <div className="sidebar-footer">
+        <button className="btn-primary">+ Agregar cuenta</button>
+        <div className="security-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
           </svg>
-          Almacenamiento local y cifrado
+          <span>Almacenamiento local y cifrado</span>
         </div>
       </div>
     </div>

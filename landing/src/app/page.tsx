@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Hero } from "@/components/Hero";
-import { Footer } from "@/components/Footer";
 
 export default function Home() {
   const [stars, setStars] = useState<number | null>(null);
@@ -19,9 +18,8 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen flex flex-col">
+    <main className="h-screen overflow-hidden">
       <Hero stars={stars} />
-      <Footer />
     </main>
   );
 }
